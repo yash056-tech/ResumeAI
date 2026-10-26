@@ -1,0 +1,349 @@
+.app {
+  min-height: 100vh; display: flex; flex-direction: column;
+  background: var(--bg);
+}
+
+/* ── Header ── */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(7, 9, 14, 0.94);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border);
+}
+
+.headerInner {
+  max-width: 1400px; margin: 0 auto; padding: 0 1.5rem;
+  height: 68px; display: flex; align-items: center; gap: 1.5rem;
+}
+
+.logo {
+  display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;
+}
+.logoIcon {
+  width: 42px; height: 42px; border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center; color: #fff;
+  box-shadow: 0 0 20px rgba(99, 120, 255, 0.45);
+}
+.logoTitleRow {
+  display: flex; align-items: center; gap: 0.45rem;
+}
+.logoName {
+  font-size: 1.15rem; font-weight: 800; color: #fff; letter-spacing: -0.03em;
+}
+.proTag {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #fff; font-size: 0.62rem; font-weight: 800; padding: 0.1rem 0.4rem;
+  border-radius: 4px; letter-spacing: 0.06em;
+}
+.logoSub {
+  font-size: 0.68rem; color: var(--text-faint); letter-spacing: 0.03em; text-transform: uppercase;
+}
+
+/* Navigation Tabs */
+.nav {
+  display: flex; gap: 0.25rem; flex: 1; justify-content: center;
+}
+@media (max-width: 1080px) {
+  .nav { display: none; }
+}
+
+.navBtn {
+  display: flex; align-items: center; gap: 0.4rem;
+  background: none; border: none; border-radius: var(--radius-sm);
+  color: var(--text-muted); padding: 0.5rem 0.95rem; font-size: 0.84rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.navBtn:hover {
+  color: var(--text); background: rgba(255, 255, 255, 0.05);
+}
+.navActive {
+  color: #fff !important;
+  background: rgba(99, 120, 255, 0.14) !important;
+  box-shadow: inset 0 0 0 1px rgba(99, 120, 255, 0.35);
+}
+.navActive svg {
+  color: var(--tab-color, var(--accent));
+}
+
+/* Header Actions */
+.headerActions {
+  display: flex; align-items: center; gap: 0.65rem; margin-left: auto; flex-shrink: 0;
+}
+
+.countryPill {
+  display: flex; align-items: center; gap: 0.3rem;
+  background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border);
+  padding: 0.35rem 0.65rem; border-radius: 99px;
+  font-size: 0.76rem; font-weight: 700; color: var(--text-muted); cursor: pointer;
+  transition: all 0.2s;
+}
+.countryPill:hover {
+  border-color: var(--accent); color: #fff;
+}
+
+.creditsBtn {
+  display: flex; align-items: center; gap: 0.35rem;
+  background: rgba(99, 120, 255, 0.1); border: 1px solid rgba(99, 120, 255, 0.25);
+  border-radius: 99px; padding: 0.35rem 0.8rem;
+  color: var(--accent2); font-size: 0.78rem; font-weight: 700; cursor: pointer;
+  transition: all 0.2s;
+}
+.creditsBtn:hover {
+  background: rgba(99, 120, 255, 0.2);
+}
+.zapIcon { color: var(--accent-yellow); }
+
+.upgradeBtn {
+  display: flex; align-items: center; gap: 0.35rem;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff; border: none; border-radius: var(--radius-sm);
+  padding: 0.45rem 0.95rem; font-size: 0.82rem; font-weight: 700; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(99, 120, 255, 0.35); transition: opacity 0.2s, transform 0.15s;
+}
+.upgradeBtn:hover {
+  opacity: 0.92; transform: translateY(-1px);
+}
+
+.keyBtn {
+  display: flex; align-items: center; gap: 0.35rem;
+  background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  color: var(--text-muted); padding: 0.45rem 0.75rem; font-size: 0.8rem; cursor: pointer;
+  transition: all 0.2s;
+}
+.keyBtn:hover {
+  border-color: var(--border-hover); color: var(--text);
+}
+.keyDot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--accent3);
+  box-shadow: 0 0 6px var(--accent3);
+}
+
+/* User Profile */
+.userProfileWrap {
+  position: relative;
+}
+.avatarBtn {
+  background: none; border: none; cursor: pointer;
+  display: flex; align-items: center; gap: 0.35rem; padding: 0.1rem;
+}
+.avatarImg {
+  width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
+  border: 2px solid var(--accent);
+}
+.caret { color: var(--text-muted); }
+
+.userDropdown {
+  position: absolute; right: 0; top: 120%; z-index: 120;
+  background: var(--bg3); border: 1px solid var(--border-hover);
+  border-radius: var(--radius); width: 240px; padding: 1rem;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(99, 120, 255, 0.15);
+  display: flex; flex-direction: column; gap: 0.8rem;
+  animation: fadeIn 0.15s ease;
+}
+
+.userDropdownHeader {
+  display: flex; flex-direction: column; gap: 0.2rem;
+  border-bottom: 1px solid var(--border); padding-bottom: 0.6rem;
+}
+.userDropdownHeader strong { font-size: 0.88rem; color: #fff; }
+.userDropdownHeader span { font-size: 0.74rem; color: var(--text-faint); }
+.userMetaBadges {
+  display: flex; gap: 0.35rem; margin-top: 0.25rem; flex-wrap: wrap;
+}
+.metaPersona {
+  background: rgba(99, 120, 255, 0.12); color: var(--accent2) !important;
+  font-size: 0.68rem !important; padding: 0.1rem 0.45rem; border-radius: 4px; font-weight: 600;
+}
+.metaCountry {
+  background: rgba(52, 211, 153, 0.12); color: var(--accent3) !important;
+  font-size: 0.68rem !important; padding: 0.1rem 0.45rem; border-radius: 4px; font-weight: 600;
+}
+.tierPill {
+  display: inline-block; background: rgba(52, 211, 153, 0.15); color: var(--accent3) !important;
+  font-weight: 700; font-size: 0.68rem !important; padding: 0.1rem 0.5rem;
+  border-radius: 99px; width: fit-content; margin-top: 0.2rem;
+}
+
+.userDropdownLinks {
+  display: flex; flex-direction: column; gap: 0.3rem;
+}
+.userDropdownLinks button {
+  display: flex; align-items: center; gap: 0.5rem;
+  background: none; border: none; border-radius: var(--radius-sm);
+  color: var(--text-muted); font-size: 0.82rem; padding: 0.5rem 0.6rem;
+  cursor: pointer; transition: all 0.2s; width: 100%; text-align: left;
+}
+.userDropdownLinks button:hover {
+  background: var(--bg2); color: #fff;
+}
+.logoutBtn {
+  color: var(--accent-red) !important;
+}
+
+.viewPlansBtn {
+  display: flex; align-items: center; gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border);
+  color: var(--text-muted); padding: 0.45rem 0.85rem; border-radius: var(--radius-sm);
+  font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.viewPlansBtn:hover {
+  background: var(--bg2); color: #fff; border-color: var(--border-hover);
+}
+
+.signInBtn {
+  display: flex; align-items: center; gap: 0.45rem;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff; border: none; border-radius: var(--radius-sm);
+  padding: 0.48rem 1.05rem; font-size: 0.84rem; font-weight: 700; cursor: pointer;
+  box-shadow: 0 4px 18px rgba(99, 120, 255, 0.4);
+  transition: all 0.2s;
+}
+.signInBtn:hover {
+  opacity: 0.94; transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(99, 120, 255, 0.6);
+}
+
+/* ── Hero Banner ── */
+.heroBanner {
+  position: relative; overflow: hidden;
+  padding: 2.2rem 1.5rem 1.8rem;
+  border-bottom: 1px solid var(--border);
+  background: radial-gradient(ellipse 60% 120% at 50% 0%, rgba(99, 120, 255, 0.06), transparent 70%);
+}
+.heroBannerInner {
+  position: relative; z-index: 1;
+  max-width: 1400px; margin: 0 auto;
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.heroBadge {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  background: color-mix(in srgb, var(--tab-color, var(--accent)) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tab-color, var(--accent)) 35%, transparent);
+  color: var(--tab-color, var(--accent));
+  padding: 0.25rem 0.8rem; border-radius: 99px; font-size: 0.74rem; font-weight: 700;
+  width: fit-content; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.heroTitle {
+  font-size: 1.85rem; font-weight: 800; color: #fff; letter-spacing: -0.03em;
+}
+.heroDesc {
+  font-size: 0.92rem; color: var(--text-muted); max-width: 620px; line-height: 1.6;
+}
+
+.heroPillsRow {
+  display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+.heroPillItem {
+  display: flex; align-items: center; gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.22rem 0.7rem; border-radius: 99px;
+  font-size: 0.74rem; color: var(--text-muted);
+}
+.heroPillItem strong { color: #fff; }
+.heroPillDot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent3); box-shadow: 0 0 6px var(--accent3);
+}
+
+.heroBg {
+  position: absolute; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse 55% 150% at 85% 50%, color-mix(in srgb, var(--tab-color, var(--accent)) 10%, transparent), transparent);
+  pointer-events: none;
+}
+
+/* ── Mobile Scroll Tabs ── */
+.mobileTabs {
+  display: none; padding: 0.75rem 1rem; gap: 0.5rem; overflow-x: auto;
+  border-bottom: 1px solid var(--border); background: var(--bg2);
+}
+@media (max-width: 1080px) {
+  .mobileTabs { display: flex; }
+}
+
+.mobilePill {
+  display: flex; align-items: center; gap: 0.35rem; flex-shrink: 0;
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 99px;
+  color: var(--text-muted); padding: 0.38rem 0.95rem; font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.mobilePillActive {
+  background: color-mix(in srgb, var(--tab-color, var(--accent)) 18%, transparent);
+  border-color: color-mix(in srgb, var(--tab-color, var(--accent)) 50%, transparent);
+  color: var(--tab-color, var(--accent));
+}
+
+/* ── Main Workspace ── */
+.main {
+  flex: 1; padding: 1.8rem 1.5rem; max-width: 1400px; margin: 0 auto; width: 100%;
+}
+
+.activeBanner {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem;
+  background: rgba(52, 211, 153, 0.08); border: 1px solid rgba(52, 211, 153, 0.25);
+  border-radius: var(--radius-sm); padding: 0.7rem 1.2rem; margin-bottom: 1.4rem;
+  font-size: 0.84rem; color: var(--accent3);
+}
+.activeBanner code {
+  font-family: 'JetBrains Mono', monospace; background: rgba(52, 211, 153, 0.15);
+  padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.78rem;
+}
+.bannerUpgrade {
+  background: none; border: none; color: var(--accent2); font-weight: 700;
+  cursor: pointer; font-size: 0.82rem; text-decoration: underline; padding: 0;
+}
+
+.guestBanner {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem;
+  background: linear-gradient(90deg, rgba(99, 120, 255, 0.1) 0%, rgba(167, 139, 250, 0.08) 100%);
+  border: 1px solid rgba(99, 120, 255, 0.3);
+  border-radius: var(--radius-sm); padding: 0.8rem 1.2rem; margin-bottom: 1.4rem;
+  font-size: 0.84rem; color: #c7d2fe;
+}
+.guestBanner strong { color: #fff; }
+.guestBannerBtn {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  background: rgba(99, 120, 255, 0.2); border: 1px solid rgba(99, 120, 255, 0.4);
+  color: #fff; padding: 0.35rem 0.8rem; border-radius: 99px;
+  font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+  white-space: nowrap;
+}
+.guestBannerBtn:hover {
+  background: var(--accent); border-color: var(--accent);
+}
+
+.contentCard {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: 2rem;
+  box-shadow: var(--glow);
+}
+@media (max-width: 600px) {
+  .contentCard { padding: 1.2rem; }
+}
+
+/* ── Footer ── */
+.footer {
+  border-top: 1px solid var(--border); padding: 1.2rem 1.5rem;
+}
+.footerInner {
+  max-width: 1400px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem;
+  font-size: 0.8rem; color: var(--text-faint);
+}
+.footerLeft {
+  display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;
+}
+.footerModel {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.74rem;
+  background: var(--bg3); border: 1px solid var(--border);
+  padding: 0.18rem 0.6rem; border-radius: 99px; color: var(--text-muted);
+}
+.footerLinks {
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.footerLinks button {
+  background: none; border: none; color: var(--text-muted); font-size: 0.78rem;
+  cursor: pointer; transition: color 0.2s;
+}
+.footerLinks button:hover { color: #fff; }

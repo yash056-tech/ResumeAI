@@ -1,0 +1,287 @@
+.container {
+  display: flex; flex-direction: column; gap: 1.4rem;
+}
+
+.inputCard {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.3rem;
+  display: flex; flex-direction: column; gap: 0.8rem;
+}
+
+.header {
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.6rem;
+}
+.labelGroup {
+  display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+}
+.label {
+  font-size: 0.82rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;
+}
+.infoBadge {
+  display: flex; align-items: center; gap: 0.3rem;
+  background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25);
+  color: var(--accent-yellow); font-size: 0.72rem; font-weight: 600; padding: 0.15rem 0.55rem;
+  border-radius: 99px;
+}
+
+.exBtns {
+  display: flex; gap: 0.4rem; flex-wrap: wrap;
+}
+.exBtn {
+  background: rgba(245, 158, 11, 0.1); color: var(--accent-yellow);
+  border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 99px;
+  padding: 0.2rem 0.75rem; font-size: 0.74rem; cursor: pointer; transition: all 0.2s;
+}
+.exBtn:hover { background: rgba(245, 158, 11, 0.2); }
+.greenBtn {
+  background: rgba(52, 211, 153, 0.1); color: var(--accent3); border-color: rgba(52, 211, 153, 0.25);
+}
+.greenBtn:hover { background: rgba(52, 211, 153, 0.2); }
+
+.textarea {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 0.9rem 1rem;
+  color: var(--text); font-family: 'Inter', sans-serif;
+  font-size: 0.87rem; line-height: 1.6; resize: vertical; outline: none;
+  transition: border-color 0.2s;
+}
+.textarea:focus { border-color: var(--accent-yellow); }
+
+.belowInput {
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.6rem;
+}
+.wordCount {
+  font-size: 0.78rem; color: var(--text-faint);
+}
+
+.detectBtn {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+  color: #fff; border: none; border-radius: var(--radius-sm);
+  padding: 0.8rem 1.8rem; font-size: 0.92rem; font-weight: 700; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.35); transition: opacity 0.2s, transform 0.15s;
+}
+.detectBtn:hover:not(:disabled) {
+  opacity: 0.92; transform: translateY(-1px);
+}
+.detectBtn:disabled {
+  opacity: 0.5; cursor: not-allowed;
+}
+
+/* Loading Animation */
+.loadingCard {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 2.2rem;
+  position: relative; overflow: hidden;
+}
+.scanLine {
+  position: absolute; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+  animation: scanline 1.6s linear infinite;
+}
+.loadingContent {
+  display: flex; align-items: center; justify-content: center; gap: 0.8rem;
+  color: var(--text-muted); font-size: 0.88rem; text-align: center;
+}
+
+.spinner {
+  width: 16px; height: 16px; border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite;
+}
+
+/* Results Grid */
+.resultsGrid {
+  display: flex; flex-direction: column; gap: 1.2rem;
+}
+
+.scoreCard {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.8rem;
+  display: grid; grid-template-columns: auto 1fr; gap: 2.5rem; align-items: center;
+}
+@media (max-width: 650px) {
+  .scoreCard { grid-template-columns: 1fr; }
+}
+
+.scoreLeft {
+  display: flex; flex-direction: column; gap: 0.4rem;
+}
+.riskBadge {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.3rem 0.8rem; border-radius: 99px; font-size: 0.78rem; font-weight: 700; width: fit-content;
+}
+.bigScore {
+  font-size: 3.8rem; font-weight: 800; line-height: 1; color: var(--risk-color, #fff);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.03em;
+}
+.bigLabel {
+  font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;
+}
+.confidence {
+  font-size: 0.78rem; color: var(--text-faint); margin-top: 0.2rem;
+}
+.confidence strong { color: var(--text); }
+
+.scoreRight {
+  display: flex; flex-direction: column; align-items: center; gap: 0.8rem;
+}
+.donutWrapper { width: 140px; height: 140px; }
+.donut { width: 100%; height: 100%; }
+
+.legend {
+  display: flex; gap: 1.4rem; font-size: 0.8rem; color: var(--text-muted); font-weight: 600;
+}
+.dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 0.3rem;
+}
+
+/* Metrics */
+.metricsCol {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem;
+}
+@media (max-width: 700px) {
+  .metricsCol { grid-template-columns: 1fr; }
+}
+
+.metricCard {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.2rem;
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.metricHeader {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.metricTitle {
+  font-size: 0.82rem; font-weight: 700; color: #fff;
+}
+.metricScore {
+  font-size: 0.95rem; font-weight: 800; color: var(--accent2);
+}
+.barTrack {
+  height: 6px; background: rgba(255, 255, 255, 0.08); border-radius: 99px; overflow: hidden;
+}
+.barFill {
+  height: 100%; border-radius: 99px; transition: width 0.6s ease;
+}
+.metricSub {
+  font-size: 0.76rem; color: var(--text-faint); line-height: 1.4; margin: 0;
+}
+
+/* Sentence Heatmap */
+.heatmapCard {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.4rem;
+  display: flex; flex-direction: column; gap: 0.9rem;
+}
+.heatmapHeader {
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;
+}
+.heatmapHeader h4 {
+  font-size: 0.95rem; font-weight: 700; color: #fff;
+}
+.heatmapLegend {
+  display: flex; gap: 0.8rem; font-size: 0.74rem; color: var(--text-muted);
+}
+.legendItem {
+  display: flex; align-items: center; gap: 0.3rem;
+}
+.greenDot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent3); }
+.yellowDot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-yellow); }
+.redDot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-red); }
+
+.heatmapBody {
+  line-height: 1.85; font-size: 0.92rem;
+  background: var(--bg3); border-radius: var(--radius-sm); padding: 1.1rem;
+}
+
+.heatmapSentence {
+  cursor: pointer; padding: 0.15rem 0.3rem; border-radius: 4px; transition: background 0.2s;
+}
+.risk-low {
+  background: rgba(52, 211, 153, 0.08); color: var(--text);
+}
+.risk-low:hover {
+  background: rgba(52, 211, 153, 0.22);
+}
+.risk-moderate {
+  background: rgba(251, 191, 36, 0.18); color: #fff;
+}
+.risk-moderate:hover {
+  background: rgba(251, 191, 36, 0.32);
+}
+.risk-high {
+  background: rgba(248, 113, 113, 0.24); color: #fff; font-weight: 500;
+  border-bottom: 2px solid var(--accent-red);
+}
+.risk-high:hover {
+  background: rgba(248, 113, 113, 0.4);
+}
+.selectedSentence {
+  outline: 2px solid #fff;
+}
+
+.inspectSentenceBox {
+  background: var(--bg); border: 1px solid var(--border-hover);
+  border-radius: var(--radius-sm); padding: 1rem;
+  display: flex; flex-direction: column; gap: 0.4rem;
+}
+.inspectHeader {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.8rem; color: var(--text-muted);
+}
+.riskBadgeSmall {
+  font-size: 0.68rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 99px;
+}
+.badge-low { background: rgba(52, 211, 153, 0.2); color: var(--accent3); }
+.badge-moderate { background: rgba(251, 191, 36, 0.2); color: var(--accent-yellow); }
+.badge-high { background: rgba(248, 113, 113, 0.2); color: var(--accent-red); }
+.inspectText {
+  font-size: 0.88rem; color: #fff; font-style: italic; margin: 0;
+}
+.inspectReason {
+  font-size: 0.78rem; color: var(--text-faint); margin: 0;
+}
+
+/* Verdict & Recommendations */
+.verdictCard {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.3rem;
+  display: flex; flex-direction: column; gap: 0.6rem;
+}
+.verdictCard h4 {
+  font-size: 0.95rem; font-weight: 700; color: #fff;
+}
+.verdictCard p {
+  font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin: 0;
+}
+.recSection {
+  margin-top: 0.4rem; display: flex; flex-direction: column; gap: 0.4rem;
+  font-size: 0.82rem; color: var(--accent3);
+}
+.recSection ul {
+  padding-left: 1.2rem; color: var(--text-muted); line-height: 1.5;
+}
+
+/* Remediation Card */
+.remediationCard {
+  background: linear-gradient(135deg, rgba(99, 120, 255, 0.1) 0%, rgba(167, 139, 250, 0.1) 100%);
+  border: 1px solid rgba(99, 120, 255, 0.35);
+  border-radius: var(--radius); padding: 1.3rem;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+}
+.remediationText strong {
+  font-size: 0.95rem; color: #fff; display: block;
+}
+.remediationText p {
+  font-size: 0.84rem; color: var(--text-muted); margin: 0.2rem 0 0;
+}
+.remediateBtn {
+  display: flex; align-items: center; gap: 0.45rem;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff; border: none; border-radius: var(--radius-sm);
+  padding: 0.75rem 1.4rem; font-size: 0.88rem; font-weight: 700; cursor: pointer;
+  box-shadow: 0 4px 18px rgba(99, 120, 255, 0.35); transition: all 0.2s;
+}
+.remediateBtn:hover {
+  opacity: 0.92; transform: translateY(-1px);
+}

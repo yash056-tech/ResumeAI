@@ -82,6 +82,17 @@
   border-color: var(--accent); color: #fff;
 }
 
+.freeBadge {
+  display: flex; align-items: center; gap: 0.35rem;
+  background: rgba(52, 211, 153, 0.12); border: 1px solid rgba(52, 211, 153, 0.35);
+  border-radius: 99px; padding: 0.35rem 0.85rem;
+  color: var(--accent3); font-size: 0.78rem; font-weight: 700;
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.2);
+}
+.freeBadgeIcon {
+  color: var(--accent3);
+}
+
 .creditsBtn {
   display: flex; align-items: center; gap: 0.35rem;
   background: rgba(99, 120, 255, 0.1); border: 1px solid rgba(99, 120, 255, 0.25);

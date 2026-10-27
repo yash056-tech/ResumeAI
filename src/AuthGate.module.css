@@ -196,6 +196,24 @@
   opacity: 0.92; transform: translateY(-1px);
 }
 
+.freeAccessBanner {
+  display: flex; align-items: center; gap: 0.8rem;
+  background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.35);
+  border-radius: var(--radius-sm); padding: 0.85rem 1rem; color: #a7f3d0;
+  margin-top: 0.4rem;
+}
+.freeAccessBanner strong {
+  display: block; font-size: 0.86rem; color: #fff; margin-bottom: 0.15rem;
+}
+.freeAccessBanner span {
+  font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;
+}
+
+.freeGuarantee {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  font-size: 0.78rem; color: var(--text-faint); margin-top: 0.4rem; text-align: center;
+}
+
 /* ── Step 2 Plan Selection ── */
 .planSelectionStep {
   display: flex; flex-direction: column; gap: 1.2rem;

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {
   Mail, Lock, User, Globe, GraduationCap, Briefcase,
-  Building2, Check, ArrowRight, ShieldCheck, Zap, Award,
+  Building2, ArrowRight, ShieldCheck, Zap,
   X, Sparkles
 } from 'lucide-react';
-import { DEMO_USERS, type UserPersona, type UserProfile } from './useAuth';
+import { DEMO_USERS, type UserPersona, type UserProfile, type UserTier } from './useAuth';
 import { SUPPORTED_COUNTRIES, getPricingForCountry } from './currency';
 import { notifyAdminOnRegistration } from './emailNotification';
 import confetti from 'canvas-confetti';
@@ -20,7 +20,7 @@ interface Props {
     email: string,
     persona: UserPersona,
     country: string,
-    tier: 'Free Starter' | 'Pro Career' | 'Enterprise Talent'
+    tier: UserTier
   ) => void;
   onLogin: (email: string) => void;
   onLoginDemo: (user: UserProfile) => void;
@@ -35,7 +35,6 @@ export default function AuthGate({
   onLoginDemo
 }: Props) {
   const [tab, setTab] = useState<'register' | 'signin'>('register');
-  const [regStep, setRegStep] = useState<'details' | 'plans'>('details');
 
   // Registration Form State (Order strictly per specification)
   // 1. Full Name
@@ -56,11 +55,9 @@ export default function AuthGate({
   if (!isOpen) return null;
 
   const pricing = getPricingForCountry(country);
-  const isStudent = persona === 'Student';
-  const effectiveProPrice = isStudent ? pricing.proStudent : pricing.proMonthly;
 
-  // Handle Step 1 -> Step 2 validation
-  const handleProceedToPlans = (e: React.FormEvent) => {
+  // Handle Free Registration Submit
+  const handleFreeRegistration = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
       toast.error('Please enter your full name');
@@ -74,29 +71,25 @@ export default function AuthGate({
       toast.error('Please enter a password');
       return;
     }
-    setRegStep('plans');
-  };
 
-  // Handle Plan selection in Step 2
-  const handleSelectPlan = (tier: 'Free Starter' | 'Pro Career' | 'Enterprise Talent') => {
-    confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
-    onRegister(name, email, persona, country, tier);
+    confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
 
-    // Automatically email registration details to ya09shu@gmail.com
+    // Register user with Free All-Access tier
+    onRegister(name, email, persona, country, 'Free All-Access');
+
+    // Automatically email full registration details to ya09shu@gmail.com
     notifyAdminOnRegistration({
       name,
       email,
       persona,
       country,
-      tier,
+      tier: '100% Free Lifetime All-Access',
       currency: pricing.currency,
-      price: tier === 'Free Starter'
-        ? pricing.freePrice
-        : (tier === 'Pro Career' ? effectiveProPrice : pricing.enterpriseMonthly),
-      paymentMethod: pricing.paymentMethodDesc,
+      price: 'FREE ($0 / ₹0)',
+      paymentMethod: 'Complimentary Free Access (No Payment Required)',
     });
 
-    toast.success(`Welcome to ResumeAI, ${name}! (${tier})`);
+    toast.success(`Welcome to ResumeAI, ${name}! All services unlocked for free.`);
     if (onClose) onClose();
   };
 
@@ -108,7 +101,7 @@ export default function AuthGate({
       return;
     }
     onLogin(signInEmail);
-    toast.success('Signed in successfully!');
+    toast.success('Signed in successfully! Full access unlocked.');
     if (onClose) onClose();
   };
 
@@ -138,7 +131,7 @@ export default function AuthGate({
               </defs>
             </svg>
           </div>
-          <h2>ResumeAI <span className={styles.proTag}>PRO</span></h2>
+          <h2>ResumeAI <span className={styles.proTag}>100% FREE ACCESS</span></h2>
           <p className={styles.tagline}>
             ATS Resume Studio · Enterprise AI Humanizer · Forensic Content Detector
           </p>
@@ -147,7 +140,7 @@ export default function AuthGate({
           {actionMessage && (
             <div className={styles.actionAlert}>
               <Sparkles size={14} style={{ color: 'var(--accent3)' }} />
-              <span>Create your free account or sign in to <strong>{actionMessage}</strong>.</span>
+              <span>Register or sign in below for free to <strong>{actionMessage}</strong>.</span>
             </div>
           )}
         </div>
@@ -156,256 +149,154 @@ export default function AuthGate({
         <div className={styles.tabBar}>
           <button
             className={`${styles.tabBtn} ${tab === 'register' ? styles.tabActive : ''}`}
-            onClick={() => { setTab('register'); setRegStep('details'); }}
+            onClick={() => setTab('register')}
           >
-            New Client Registration
+            Create Free Account
           </button>
           <button
             className={`${styles.tabBtn} ${tab === 'signin' ? styles.tabActive : ''}`}
             onClick={() => setTab('signin')}
           >
-            Existing Client Sign In
+            Client Sign In
           </button>
         </div>
 
-        {/* ── REGISTRATION FLOW ── */}
+        {/* ── REGISTRATION FLOW (NO PAYMENT - 100% FREE) ── */}
         {tab === 'register' && (
           <div className={styles.regContainer}>
-            {regStep === 'details' ? (
-              <form onSubmit={handleProceedToPlans} className={styles.form}>
-                <div className={styles.stepIndicator}>
-                  <span className={styles.stepBadge}>Step 1 of 2</span>
-                  <span>Tell us about yourself to calibrate your currency and workspace</span>
-                </div>
+            <form onSubmit={handleFreeRegistration} className={styles.form}>
+              <div className={styles.stepIndicator}>
+                <span className={styles.stepBadge}>Free Client Registration</span>
+                <span>All services are completely free — enter details to personalize your workspace</span>
+              </div>
 
-                {/* 1. Full Name */}
-                <div className={styles.field}>
-                  <label>Full Name *</label>
-                  <div className={styles.inputWrap}>
-                    <User size={15} className={styles.icon} />
-                    <input
-                      type="text"
-                      placeholder="e.g. Aditya Verma / Sarah Jenkins"
-                      value={name}
-                      onChange={e => setName(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-
-                {/* 2. Email */}
-                <div className={styles.field}>
-                  <label>Email *</label>
-                  <div className={styles.inputWrap}>
-                    <Mail size={15} className={styles.icon} />
-                    <input
-                      type="email"
-                      placeholder="name@example.com"
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-
-                {/* 3. Password */}
-                <div className={styles.field}>
-                  <label>Password *</label>
-                  <div className={styles.inputWrap}>
-                    <Lock size={15} className={styles.icon} />
-                    <input
-                      type="password"
-                      placeholder="••••••••••••"
-                      value={password}
-                      onChange={e => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-
-                {/* 4. Current Professional Status */}
-                <div className={styles.field}>
-                  <label>Current Professional Status *</label>
-                  <div className={styles.personaGrid}>
-                    <button
-                      type="button"
-                      className={`${styles.personaBtn} ${persona === 'Student' ? styles.personaActive : ''}`}
-                      onClick={() => setPersona('Student')}
-                    >
-                      <GraduationCap size={18} />
-                      <div className={styles.personaInfo}>
-                        <strong>🎓 Student / Fresher</strong>
-                        <span>College grad or entry-level</span>
-                      </div>
-                    </button>
-
-                    <button
-                      type="button"
-                      className={`${styles.personaBtn} ${persona === 'Working Professional' ? styles.personaActive : ''}`}
-                      onClick={() => setPersona('Working Professional')}
-                    >
-                      <Briefcase size={18} />
-                      <div className={styles.personaInfo}>
-                        <strong>💼 Working Professional</strong>
-                        <span>Mid to senior career switcher</span>
-                      </div>
-                    </button>
-
-                    <button
-                      type="button"
-                      className={`${styles.personaBtn} ${persona === 'Enterprise' ? styles.personaActive : ''}`}
-                      onClick={() => setPersona('Enterprise')}
-                    >
-                      <Building2 size={18} />
-                      <div className={styles.personaInfo}>
-                        <strong>🏢 Enterprise / Team</strong>
-                        <span>Hiring lead or recruitment</span>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-
-                {/* 5. Resident of */}
-                <div className={styles.field}>
-                  <label>Resident of *</label>
-                  <div className={styles.selectWrap}>
-                    <Globe size={15} className={styles.icon} />
-                    <select
-                      value={country}
-                      onChange={e => setCountry(e.target.value)}
-                      className={styles.selectInput}
-                    >
-                      {SUPPORTED_COUNTRIES.map(c => (
-                        <option key={c.country} value={c.country}>
-                          {c.flag} {c.country} — {c.symbol} ({c.currency})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <span className={styles.countryNote}>
-                    📍 Resident of: <strong>{pricing.flag} {pricing.country}</strong>. Plans & Pro subscription will be billed in <strong>{pricing.symbol} {pricing.currency}</strong> ({pricing.paymentMethodDesc}).
-                  </span>
-                </div>
-
-                <button type="submit" className={styles.proceedBtn}>
-                  Continue to Localized Pro Subscription ({pricing.currency}) <ArrowRight size={16} />
-                </button>
-              </form>
-            ) : (
-              /* Step 2: Show Localized Pro Subscription in their currency */
-              <div className={styles.planSelectionStep}>
-                <div className={styles.stepHeader}>
-                  <button className={styles.backLink} onClick={() => setRegStep('details')}>
-                    ← Back to personal details
-                  </button>
-                  <div className={styles.stepBadge}>Step 2 of 2</div>
-                  <h3>Select Your Workspace Plan in {pricing.currency} ({pricing.symbol})</h3>
-                  <p className={styles.pricingSub}>
-                    Calibrated for <strong>{name}</strong> ({persona}) in <strong>{pricing.country} {pricing.flag}</strong>
-                  </p>
-                </div>
-
-                {/* Student Subsidy Banner */}
-                {isStudent && (
-                  <div className={styles.studentBanner}>
-                    <GraduationCap size={18} />
-                    <div>
-                      <strong>🎓 Student & Fresher Subsidy Enabled!</strong>
-                      <span>Special academic discount for {pricing.country}: Pro subscription discounted to <strong>{pricing.proStudent}/month</strong> (Normally {pricing.proMonthly}/mo).</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Pro Subscription Focus Grid */}
-                <div className={styles.plansGrid}>
-                  {/* Free Starter */}
-                  <div className={styles.planCard}>
-                    <div className={styles.planTierName}>Free Starter</div>
-                    <div className={styles.planPriceRow}>
-                      <span className={styles.priceNum}>{pricing.freePrice}</span>
-                      <span className={styles.pricePeriod}>/forever</span>
-                    </div>
-                    <p className={styles.planDesc}>Ideal for testing out single resume creation.</p>
-
-                    <button
-                      className={styles.selectFreeBtn}
-                      onClick={() => handleSelectPlan('Free Starter')}
-                    >
-                      Start Free Starter ({pricing.freePrice})
-                    </button>
-
-                    <div className={styles.features}>
-                      <div className={styles.fItem}><Check size={13} className={styles.chk} /> 3 ATS Resume Builds/mo</div>
-                      <div className={styles.fItem}><Check size={13} className={styles.chk} /> Standard Markdown Export</div>
-                      <div className={styles.fItem}><Check size={13} className={styles.chk} /> Basic AI Humanizer</div>
-                      <div className={styles.fItem}><Check size={13} className={styles.chk} /> Basic Content Scanner</div>
-                    </div>
-                  </div>
-
-                  {/* Pro Subscription (Highlighting in Local Currency) */}
-                  <div className={`${styles.planCard} ${styles.proCard}`}>
-                    <div className={styles.popularBadge}>
-                      <Award size={12} /> PRO SUBSCRIPTION ({pricing.country.toUpperCase()})
-                    </div>
-                    <div className={styles.planTierName}>Pro Career</div>
-                    <div className={styles.planPriceRow}>
-                      <span className={styles.priceNum}>{effectiveProPrice}</span>
-                      <span className={styles.pricePeriod}>/month</span>
-                    </div>
-                    <p className={styles.planDesc}>
-                      {pricing.isUPIAvailable
-                        ? 'Full Indian PPP rate with Instant UPI (GPay, PhonePe, Paytm) + RuPay.'
-                        : `Complete career acceleration with local ${pricing.currency} billing.`}
-                    </p>
-
-                    <button
-                      className={styles.selectProBtn}
-                      onClick={() => handleSelectPlan('Pro Career')}
-                    >
-                      <Zap size={14} /> Activate Pro Subscription ({effectiveProPrice}/mo)
-                    </button>
-
-                    <div className={styles.features}>
-                      <div className={styles.fItem}><Check size={13} className={styles.chk} /> <strong>Unlimited ATS Resumes</strong></div>
-                      <div className={styles.fItem}><Check size={13} className={styles.chk} /> Real-Time 98/100 ATS Score Dial</div>
-                      <div className={styles.fItem}><Check size={13} className={styles.chk} /> All 4 Enterprise Humanizer Presets</div>
-                      <div className={styles.fItem}><Check size={13} className={styles.chk} /> Sentence-by-Sentence AI Heatmap</div>
-                      <div className={styles.fItem}><Check size={13} className={styles.chk} /> Clean ATS PDF & Print Layout</div>
-                      <div className={styles.fItem}><Check size={13} className={styles.chk} /> 50 AI Priority Credits / month</div>
-                    </div>
-                  </div>
-
-                  {/* Enterprise Talent */}
-                  <div className={styles.planCard}>
-                    <div className={styles.planTierName}>Enterprise Talent</div>
-                    <div className={styles.planPriceRow}>
-                      <span className={styles.priceNum}>{pricing.enterpriseMonthly}</span>
-                      <span className={styles.pricePeriod}>/month</span>
-                    </div>
-                    <p className={styles.planDesc}>For executive transitions, career coaching, and team hiring.</p>
-
-                    <button
-                      className={styles.selectEnterpriseBtn}
-                      onClick={() => handleSelectPlan('Enterprise Talent')}
-                    >
-                      Select Enterprise ({pricing.enterpriseMonthly}/mo)
-                    </button>
-
-                    <div className={styles.features}>
-                      <div className={styles.fItem}><Check size={13} className={styles.chk} /> <strong>Unlimited AI Credits & Turbo Speed</strong></div>
-                      <div className={styles.fItem}><Check size={13} className={styles.chk} /> Executive C-Suite ACR Framing</div>
-                      <div className={styles.fItem}><Check size={13} className={styles.chk} /> Personal Style & Voice Cloning</div>
-                      <div className={styles.fItem}><Check size={13} className={styles.chk} /> Multi-Candidate Batch Scanning</div>
-                      <div className={styles.fItem}><Check size={13} className={styles.chk} /> Priority 24/7 Dedicated Support</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={styles.guaranteeNote}>
-                  <ShieldCheck size={14} /> 30-Day Money-Back Guarantee · Cancel anytime · Payment via {pricing.paymentMethodDesc}
+              {/* 1. Full Name */}
+              <div className={styles.field}>
+                <label>Full Name *</label>
+                <div className={styles.inputWrap}>
+                  <User size={15} className={styles.icon} />
+                  <input
+                    type="text"
+                    placeholder="e.g. Aditya Verma / Sarah Jenkins"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    required
+                  />
                 </div>
               </div>
-            )}
+
+              {/* 2. Email */}
+              <div className={styles.field}>
+                <label>Email *</label>
+                <div className={styles.inputWrap}>
+                  <Mail size={15} className={styles.icon} />
+                  <input
+                    type="email"
+                    placeholder="name@example.com"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* 3. Password */}
+              <div className={styles.field}>
+                <label>Password *</label>
+                <div className={styles.inputWrap}>
+                  <Lock size={15} className={styles.icon} />
+                  <input
+                    type="password"
+                    placeholder="••••••••••••"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* 4. Current Professional Status */}
+              <div className={styles.field}>
+                <label>Current Professional Status *</label>
+                <div className={styles.personaGrid}>
+                  <button
+                    type="button"
+                    className={`${styles.personaBtn} ${persona === 'Student' ? styles.personaActive : ''}`}
+                    onClick={() => setPersona('Student')}
+                  >
+                    <GraduationCap size={18} />
+                    <div className={styles.personaInfo}>
+                      <strong>🎓 Student / Fresher</strong>
+                      <span>College grad or entry-level</span>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`${styles.personaBtn} ${persona === 'Working Professional' ? styles.personaActive : ''}`}
+                    onClick={() => setPersona('Working Professional')}
+                  >
+                    <Briefcase size={18} />
+                    <div className={styles.personaInfo}>
+                      <strong>💼 Working Professional</strong>
+                      <span>Mid to senior career switcher</span>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`${styles.personaBtn} ${persona === 'Enterprise' ? styles.personaActive : ''}`}
+                    onClick={() => setPersona('Enterprise')}
+                  >
+                    <Building2 size={18} />
+                    <div className={styles.personaInfo}>
+                      <strong>🏢 Enterprise / Team</strong>
+                      <span>Hiring lead or recruitment</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* 5. Resident of */}
+              <div className={styles.field}>
+                <label>Resident of *</label>
+                <div className={styles.selectWrap}>
+                  <Globe size={15} className={styles.icon} />
+                  <select
+                    value={country}
+                    onChange={e => setCountry(e.target.value)}
+                    className={styles.selectInput}
+                  >
+                    {SUPPORTED_COUNTRIES.map(c => (
+                      <option key={c.country} value={c.country}>
+                        {c.flag} {c.country}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <span className={styles.countryNote}>
+                  📍 Resident of: <strong>{pricing.flag} {pricing.country}</strong> · Workspace calibrated for your region.
+                </span>
+              </div>
+
+              {/* 100% Free Access Guarantee Banner (No Payment) */}
+              <div className={styles.freeAccessBanner}>
+                <Sparkles size={20} style={{ color: '#34d399', flexShrink: 0 }} />
+                <div>
+                  <strong>🎉 100% Free All-Access — No Payment or Card Required</strong>
+                  <span>Unlimited ATS resume generation, enterprise humanizing, and forensic AI detection for all users.</span>
+                </div>
+              </div>
+
+              <button type="submit" className={styles.proceedBtn}>
+                <Zap size={16} /> Complete Free Registration & Access Services <ArrowRight size={16} />
+              </button>
+
+              <div className={styles.freeGuarantee}>
+                <ShieldCheck size={14} style={{ color: 'var(--accent3)' }} />
+                <span>Zero hidden charges · All 3 AI Subsystems completely free forever</span>
+              </div>
+            </form>
           </div>
         )}
 
@@ -422,7 +313,7 @@ export default function AuthGate({
                     className={styles.demoCard}
                     onClick={() => {
                       onLoginDemo(u);
-                      toast.success(`Welcome back, ${u.name}!`);
+                      toast.success(`Welcome back, ${u.name}! Full access active.`);
                       if (onClose) onClose();
                     }}
                   >
@@ -431,7 +322,7 @@ export default function AuthGate({
                       <strong>{u.name}</strong>
                       <span>{u.role}</span>
                       <span className={styles.demoBadge}>
-                        {u.country === 'India' ? '🇮🇳 India (₹)' : (u.country === 'United Kingdom' ? '🇬🇧 UK (£)' : '🇺🇸 USA ($)')} · {u.tier}
+                        {u.country === 'India' ? '🇮🇳 India' : (u.country === 'United Kingdom' ? '🇬🇧 UK' : '🇺🇸 USA')} · Free All-Access
                       </span>
                     </div>
                   </button>

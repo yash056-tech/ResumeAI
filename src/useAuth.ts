@@ -3,6 +3,8 @@ import { getPricingForCountry } from './currency';
 
 export type UserPersona = 'Student' | 'Working Professional' | 'Enterprise';
 
+export type UserTier = 'Free All-Access' | 'Pro Career' | 'Enterprise Talent' | 'Free Starter';
+
 export interface UserProfile {
   id: string;
   name: string;
@@ -13,7 +15,7 @@ export interface UserProfile {
   currencySymbol: string;
   role: string;
   avatar: string;
-  tier: 'Free Starter' | 'Pro Career' | 'Enterprise Talent';
+  tier: UserTier;
   creditsRemaining: number;
   maxCredits: number;
   joinedDate: string;
@@ -49,9 +51,9 @@ export const DEMO_USERS: UserProfile[] = [
     currencySymbol: '₹',
     role: 'Senior Software Engineer',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-    tier: 'Pro Career',
-    creditsRemaining: 48,
-    maxCredits: 50,
+    tier: 'Free All-Access',
+    creditsRemaining: 999,
+    maxCredits: 999,
     joinedDate: 'Oct 2026',
   },
   {
@@ -64,9 +66,9 @@ export const DEMO_USERS: UserProfile[] = [
     currencySymbol: '₹',
     role: 'Computer Science Graduate',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    tier: 'Pro Career',
-    creditsRemaining: 45,
-    maxCredits: 50,
+    tier: 'Free All-Access',
+    creditsRemaining: 999,
+    maxCredits: 999,
     joinedDate: 'Oct 2026',
   },
   {
@@ -79,9 +81,9 @@ export const DEMO_USERS: UserProfile[] = [
     currencySymbol: '$',
     role: 'Principal Cloud Architect',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
-    tier: 'Enterprise Talent',
-    creditsRemaining: 120,
-    maxCredits: 120,
+    tier: 'Free All-Access',
+    creditsRemaining: 999,
+    maxCredits: 999,
     joinedDate: 'Sep 2026',
   },
   {
@@ -94,9 +96,9 @@ export const DEMO_USERS: UserProfile[] = [
     currencySymbol: '£',
     role: 'Fintech Solutions Lead',
     avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80',
-    tier: 'Pro Career',
-    creditsRemaining: 50,
-    maxCredits: 50,
+    tier: 'Free All-Access',
+    creditsRemaining: 999,
+    maxCredits: 999,
     joinedDate: 'Oct 2026',
   },
 ];
@@ -182,9 +184,9 @@ export function useAuth() {
       currencySymbol: pricing.symbol,
       role: 'Career Candidate',
       avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(email)}`,
-      tier: 'Pro Career',
-      creditsRemaining: 50,
-      maxCredits: 50,
+      tier: 'Free All-Access',
+      creditsRemaining: 999,
+      maxCredits: 999,
       joinedDate: 'Today',
     };
     setUser(newUser);
@@ -195,7 +197,7 @@ export function useAuth() {
     email: string,
     persona: UserPersona,
     country: string,
-    tier: 'Free Starter' | 'Pro Career' | 'Enterprise Talent' = 'Free Starter'
+    tier: UserTier = 'Free All-Access'
   ): UserProfile => {
     const pricing = getPricingForCountry(country);
     const roleDefault = persona === 'Student'
@@ -213,8 +215,8 @@ export function useAuth() {
       role: roleDefault,
       avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name || email)}`,
       tier: tier,
-      creditsRemaining: tier === 'Enterprise Talent' ? 120 : (tier === 'Pro Career' ? 50 : 5),
-      maxCredits: tier === 'Enterprise Talent' ? 120 : (tier === 'Pro Career' ? 50 : 5),
+      creditsRemaining: 999,
+      maxCredits: 999,
       joinedDate: 'Today',
     };
     setUser(newUser);
@@ -226,20 +228,16 @@ export function useAuth() {
   };
 
   const consumeCredit = () => {
-    if (!user) return false;
-    if (user.tier === 'Enterprise Talent') return true;
-    if (user.creditsRemaining <= 0) return false;
-    setUser(prev => prev ? { ...prev, creditsRemaining: Math.max(0, prev.creditsRemaining - 1) } : null);
-    return true;
+    return true; // All services are 100% free with unlimited access
   };
 
-  const upgradeTier = (tier: 'Free Starter' | 'Pro Career' | 'Enterprise Talent') => {
+  const upgradeTier = (tier: UserTier) => {
     if (!user) return;
     setUser({
       ...user,
       tier,
-      creditsRemaining: tier === 'Enterprise Talent' ? 150 : (tier === 'Pro Career' ? 50 : 5),
-      maxCredits: tier === 'Enterprise Talent' ? 150 : (tier === 'Pro Career' ? 50 : 5),
+      creditsRemaining: 999,
+      maxCredits: 999,
     });
   };
 

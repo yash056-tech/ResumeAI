@@ -2,14 +2,13 @@ import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import {
   FileText, Wand2, ScanSearch, Key, Zap, CheckCircle2,
-  Sparkles, LogOut, ChevronDown, Award, Shield,
+  Sparkles, LogOut, ChevronDown, Shield,
   Globe, ArrowRight
 } from 'lucide-react';
 import { useApiKey } from './useApiKey';
 import { useAuth } from './useAuth';
 import AuthGate from './AuthGate';
 import ApiKeyModal from './ApiKeyModal';
-import PricingModal from './PricingModal';
 import ResumeBuilder from './ResumeBuilder';
 import Humanizer from './Humanizer';
 import Detector from './Detector';
@@ -56,16 +55,14 @@ export default function App() {
     loginWithCredentials,
     registerUser,
     logout,
-    upgradeTier,
     addSavedResume,
   } = useAuth();
 
   const [activeTab, setActiveTab] = useState<Tab>('resume');
   const [showKeyModal, setShowKeyModal] = useState(false);
-  const [showPricingModal, setShowPricingModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
-  // Auth Modal State (Pop-up triggered when visitor clicks an action or header button)
+  // Auth Modal State (Pop-up triggered when visitor clicks an action or clicks Sign In/Register)
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authActionMessage, setAuthActionMessage] = useState<string | undefined>(undefined);
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
@@ -132,8 +129,7 @@ export default function App() {
         }}
       />
 
-      {/* ── REGISTRATION / SIGN IN POP-UP MODAL ── */}
-      {/* Pops up only when user clicks an action or clicks Sign In/Register */}
+      {/* ── REGISTRATION / SIGN IN POP-UP MODAL (100% FREE ACCESS) ── */}
       {showAuthModal && (
         <AuthGate
           isOpen={showAuthModal}
@@ -159,19 +155,7 @@ export default function App() {
         <ApiKeyModal onSave={handleKeySave} currentKey={apiKey} />
       )}
 
-      {/* ── Pricing Matrix Modal ── */}
-      {showPricingModal && (
-        <PricingModal
-          isOpen={showPricingModal}
-          onClose={() => setShowPricingModal(false)}
-          currentTier={user?.tier || 'Free Starter'}
-          userCountry={user?.country || 'India'}
-          userPersona={user?.persona || 'Working Professional'}
-          onUpgrade={upgradeTier}
-        />
-      )}
-
-      {/* ── Modern Commercial Header ── */}
+      {/* ── Modern Header ── */}
       <header className={styles.header}>
         <div className={styles.headerInner}>
           {/* Brand Logo with Custom Emblem & Name */}
@@ -193,9 +177,9 @@ export default function App() {
             <div>
               <div className={styles.logoTitleRow}>
                 <span className={styles.logoName}>ResumeAI</span>
-                <span className={styles.proTag}>PRO</span>
+                <span className={styles.proTag}>100% FREE</span>
               </div>
-              <div className={styles.logoSub}>ATS Resume · AI Humanizer · Content Detector</div>
+              <div className={styles.logoSub}>ATS Resume Studio · AI Humanizer · Content Detector</div>
             </div>
           </div>
 
@@ -217,18 +201,8 @@ export default function App() {
             })}
           </nav>
 
-          {/* Commercial Header Actions */}
+          {/* Header Actions */}
           <div className={styles.headerActions}>
-            {/* View Localized Plans */}
-            <button
-              className={styles.viewPlansBtn}
-              onClick={() => setShowPricingModal(true)}
-              title="View Localized Pricing & Currency Plans"
-            >
-              <Award size={13} style={{ color: 'var(--accent2)' }} />
-              <span>Plans & Pricing</span>
-            </button>
-
             {/* API Key Status Button */}
             <button
               className={styles.keyBtn}
@@ -242,24 +216,11 @@ export default function App() {
             {/* Authenticated User Status OR Guest Sign In Button */}
             {isAuthenticated && user ? (
               <>
-                {/* Credits Meter */}
-                <button
-                  className={styles.creditsBtn}
-                  onClick={() => setShowPricingModal(true)}
-                  title="AI Usage Credits"
-                >
-                  <Zap size={13} className={styles.zapIcon} />
-                  <span>{user.creditsRemaining}/{user.maxCredits} Credits</span>
-                </button>
-
-                {/* Plan Badge / Upgrade Button */}
-                <button
-                  className={styles.upgradeBtn}
-                  onClick={() => setShowPricingModal(true)}
-                >
-                  <Sparkles size={13} />
-                  <span>{user.tier}</span>
-                </button>
+                {/* 100% Free Lifetime Access Badge */}
+                <div className={styles.freeBadge}>
+                  <Sparkles size={13} className={styles.freeBadgeIcon} />
+                  <span>Free Full Access</span>
+                </div>
 
                 {/* User Profile Hub */}
                 <div className={styles.userProfileWrap}>
@@ -279,16 +240,13 @@ export default function App() {
                         <div className={styles.userMetaBadges}>
                           <span className={styles.metaPersona}>{user.persona}</span>
                           <span className={styles.metaCountry}>
-                            {user.country} ({user.currencySymbol} {user.currency})
+                            {user.country}
                           </span>
                         </div>
-                        <span className={styles.tierPill}>{user.tier}</span>
+                        <span className={styles.tierPill}>100% Free All-Access</span>
                       </div>
 
                       <div className={styles.userDropdownLinks}>
-                        <button onClick={() => { setShowPricingModal(true); setShowUserMenu(false); }}>
-                          <Award size={14} /> Localized Plans ({user.currency})
-                        </button>
                         <button onClick={() => { setShowKeyModal(true); setShowUserMenu(false); }}>
                           <Key size={14} /> Gemini API Key
                         </button>
@@ -301,23 +259,23 @@ export default function App() {
                 </div>
               </>
             ) : (
-              /* High-Converting Guest CTA to Sign In or Register */
+              /* Free Guest CTA to Sign In or Register */
               <button
                 className={styles.signInBtn}
                 onClick={() => {
-                  setAuthActionMessage('Get Started with ResumeAI');
+                  setAuthActionMessage('Get Free Lifetime All-Access');
                   setShowAuthModal(true);
                 }}
               >
                 <Sparkles size={13} />
-                <span>Sign In / Register</span>
+                <span>Free Sign In / Register</span>
               </button>
             )}
           </div>
         </div>
       </header>
 
-      {/* ── Subsystem Hero Banner (Polished & Attractive) ── */}
+      {/* ── Subsystem Hero Banner ── */}
       <div className={styles.heroBanner} style={{ '--tab-color': activeTabInfo.color } as React.CSSProperties}>
         <div className={styles.heroBannerInner}>
           <div className={styles.heroBadge}>
@@ -326,11 +284,11 @@ export default function App() {
           <h1 className={styles.heroTitle}>{activeTabInfo.label}</h1>
           <p className={styles.heroDesc}>{activeTabInfo.desc}</p>
 
-          {/* Attractive feature pills row */}
+          {/* Feature pills row */}
           <div className={styles.heroPillsRow}>
             <div className={styles.heroPillItem}>
               <span className={styles.heroPillDot} />
-              <span>Engine: <strong>Gemini 3.5 Flash Turbo</strong></span>
+              <span>Offering: <strong>100% Free Lifetime Services</strong></span>
             </div>
             <div className={styles.heroPillItem}>
               <Shield size={12} style={{ color: 'var(--accent3)' }} />
@@ -338,7 +296,7 @@ export default function App() {
             </div>
             <div className={styles.heroPillItem}>
               <Globe size={12} style={{ color: 'var(--accent2)' }} />
-              <span>Multi-Currency: <strong>8+ Regional Currencies & UPI</strong></span>
+              <span>Global Support: <strong>All Countries Supported</strong></span>
             </div>
           </div>
         </div>
@@ -370,29 +328,26 @@ export default function App() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <CheckCircle2 size={16} />
               <span>
-                <strong>Client Session Active:</strong> Logged in as <strong>{user.name}</strong> ({user.persona}) · Region: <strong>{user.country} ({user.currency})</strong> · Model: <code>gemini-3.5-flash-lite</code>.
+                <strong>Client Session Active:</strong> Logged in as <strong>{user.name}</strong> ({user.persona}) · Region: <strong>{user.country}</strong> · 100% Free All-Access Active.
               </span>
             </div>
-            <button className={styles.bannerUpgrade} onClick={() => setShowPricingModal(true)}>
-              Manage Plans ({user.currency}) →
-            </button>
           </div>
         ) : (
           <div className={styles.guestBanner}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
               <Sparkles size={16} style={{ color: 'var(--accent2)' }} />
               <span>
-                <strong>Interactive Preview Mode:</strong> Explore the three subsystems below. Fill in your details or test templates — you will be prompted to create your free account only upon clicking <strong>Generate</strong>.
+                <strong>Interactive Preview Mode:</strong> All services are 100% free. Explore the three subsystems below, type details, or test templates — you will be prompted to create your free account only upon clicking <strong>Generate</strong>.
               </span>
             </div>
             <button
               className={styles.guestBannerBtn}
               onClick={() => {
-                setAuthActionMessage('Unlock Unlimited AI Generations');
+                setAuthActionMessage('Get Free Lifetime All-Access');
                 setShowAuthModal(true);
               }}
             >
-              Register / Sign In <ArrowRight size={13} />
+              Free Register / Sign In <ArrowRight size={13} />
             </button>
           </div>
         )}
@@ -429,7 +384,7 @@ export default function App() {
         </div>
       </main>
 
-      {/* ── Commercial Footer ── */}
+      {/* ── Footer ── */}
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
           <div className={styles.footerLeft}>
@@ -438,10 +393,6 @@ export default function App() {
           </div>
 
           <div className={styles.footerLinks}>
-            <button onClick={() => setShowPricingModal(true)}>
-              Pricing ({user?.currency || 'Global'})
-            </button>
-            <span>•</span>
             <button onClick={() => setShowKeyModal(true)}>API Gateway</button>
             <span>•</span>
             {isAuthenticated ? (

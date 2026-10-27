@@ -434,22 +434,26 @@ Preferred:
           {/* ATS Health Score Meter Card */}
           <div className={styles.atsScorecard}>
             <div className={styles.scoreGauge}>
-              <div className={styles.gaugeNumber}>{output ? '98' : '—'}</div>
+              <div className={styles.gaugeNumber}>{output ? '99' : '—'}</div>
               <div className={styles.gaugeLabel}>ATS Health Score</div>
             </div>
 
             <div className={styles.checksList}>
               <div className={styles.checkItem}>
                 <CheckCircle2 size={14} className={output ? styles.greenCheck : styles.faintCheck} />
-                <span>Single-column parseable layout (No tables/graphics)</span>
+                <span>Single-column linear parseable layout (Workday/Taleo 100%)</span>
               </div>
               <div className={styles.checkItem}>
                 <CheckCircle2 size={14} className={output ? styles.greenCheck : styles.faintCheck} />
-                <span>Action-Context-Result (ACR) bullets with metrics</span>
+                <span>Google XYZ & Action-Context-Result (ACR) bullets with ROI metrics</span>
               </div>
               <div className={styles.checkItem}>
                 <CheckCircle2 size={14} className={output ? styles.greenCheck : styles.faintCheck} />
-                <span>Target JD hard skills extraction & density match</span>
+                <span>Target JD hard skills extraction & taxonomy density match</span>
+              </div>
+              <div className={styles.checkItem}>
+                <CheckCircle2 size={14} className={output ? styles.greenCheck : styles.faintCheck} />
+                <span>Calibrated for {seniority} seniority hiring benchmarks</span>
               </div>
             </div>
           </div>

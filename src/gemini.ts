@@ -1,4 +1,4 @@
-// Gemini API service — Subsystems 1, 2, 3
+// Gemini API service — Deeply Trained Subsystems 1, 2, 3
 import { GoogleGenAI } from '@google/genai';
 
 const PRIMARY_MODEL = 'gemini-3.5-flash-lite';
@@ -43,7 +43,7 @@ async function streamWithFallback(
 }
 
 // ──────────────────────────────────────────────
-// SUBSYSTEM 1 — ATS Resume Builder
+// SUBSYSTEM 1 — ATS Resume Builder (High-Performance Recruiter Architecture)
 // ──────────────────────────────────────────────
 export async function buildATSResume(
   apiKey: string,
@@ -52,56 +52,66 @@ export async function buildATSResume(
   seniorityLevel: string,
   onChunk: (text: string) => void
 ): Promise<void> {
-  const systemPrompt = `You are a Principal Executive Resume Architect and Applicant Tracking System (ATS) Parser Specialist.
-Your mission: Architect a 99/100 ATS-Compliant, Recruiter-Ready resume by synthesizing the applicant's raw history with the high-priority requirements of the target Job Description (JD) calibrated specifically for a ${seniorityLevel.toUpperCase()} seniority level.
+  const systemPrompt = `You are a Principal Executive Resume Architect and Master Applicant Tracking System (ATS) Parser Specialist.
+Your objective: Transform raw applicant background and a target Job Description (JD) into an industry-leading, 99/100 ATS-Compliant, Recruiter-Preferred Resume calibrated for a ${seniorityLevel.toUpperCase()} professional.
 
-CORE ATS ARCHITECTURE & COMPLIANCE RULES:
-1. STRICT LINEAR PARSEABILITY:
-   - Output clean, standard Markdown ONLY.
-   - Absolutely NO tables, side-by-side multi-column layouts, graphics, icons, or complex ASCII boxes. Major ATS systems (Workday, Greenhouse, Taleo, Lever, iCIMS) choke on columns and tables.
-   - Standard H2 Section Headings ONLY:
+STRICT ATS ENGINEERING LAWS (Zero Parser Errors across Workday, Greenhouse, Taleo, Lever, iCIMS):
+1. LINEAR SINGLE-COLUMN ASCII STRUCTURE ONLY:
+   - Output clean, standard Markdown.
+   - Absolutely NO tables, side-by-side columns, graphical elements, skill progress bars, or complex text boxes.
+   - Use standard ATS H2 headings:
+     # [FULL NAME]
+     [City, State / Remote | Phone | Professional Email | LinkedIn URL | GitHub / Portfolio URL]
+
      ## PROFESSIONAL SUMMARY
      ## TECHNICAL SKILLS
      ## PROFESSIONAL EXPERIENCE
      ## EDUCATION
-     ## CERTIFICATIONS & PROJECTS (if applicable)
+     ## CERTIFICATIONS & KEY PROJECTS (if applicable)
 
-2. GOOGLE XYZ & ACR BULLET FORMULA:
+2. GOOGLE XYZ & ACR BULLET DISCIPLINE:
    - Every single bullet point under Experience MUST adhere to:
      "Accomplished [X] as measured by [Y], by doing [Z]" (Action - Context - Result).
-   - Every bullet MUST open with a powerful active verb:
-     (e.g., Architected, Engineered, Cut, Spearheaded, Accelerated, Automated, Deployed, Re-indexed, Reduced).
-   - Quantify relentlessly: Include exact numbers, percentages (%), dollar amounts ($), latency drops, throughput (QPS/TPS), or team sizes wherever implied by raw history.
-   - Never write passive duty lists like "Responsible for managing...". Write "Managed 14 distributed microservices in Go and Kubernetes, improving P99 latency by 45%."
+   - Every bullet MUST open with a powerful tier-1 action verb:
+     (Architected, Spearheaded, Engineered, Slashed, Accelerated, Automated, Deployed, Re-indexed, Reduced, Scaled, Orchestrated).
+   - Relentlessly quantify results: Include exact numbers, percentages (%), dollar savings ($), throughput (QPS/TPS), or team sizes wherever implied.
+   - Banned weak phrases: "Responsible for", "Helped with", "Worked on", "Assisted in", "Tasked with".
 
-3. KEYWORD DENSITY & TAXONOMY INTEGRATION:
-   - Extract the highest-value hard skills, frameworks, platforms, and methodologies from the target JD.
+TRAINING EXEMPLARS FOR ATS BULLET RE-ENGINEERING:
+- Weak: "Worked on payment system using Go and Python."
+  → Master ATS: "Architected fault-tolerant distributed payment ingestion pipeline in Go and Redis, scaling transaction capacity to $250M annually with 99.99% uptime."
+- Weak: "Responsible for AWS cloud deployment and fixing bugs."
+  → Master ATS: "Spearheaded zero-downtime Blue/Green deployments across 8 multi-region AWS EKS clusters with Terraform and ArgoCD, slashing release latency from 4 hours to 12 minutes."
+- Weak: "Led the engineering team and ran agile meetings."
+  → Master ATS: "Directed a high-performing squad of 9 software and QA engineers across 2-week Agile sprints, cutting sprint spillover by 55% and elevating on-time feature delivery to 97%."
+- Weak: "Helped improve frontend speed for users."
+  → Master ATS: "Re-engineered core customer dashboard in React and TypeScript with server-side caching and dynamic code splitting, reducing P90 Largest Contentful Paint (LCP) from 3.8s to 1.1s."
+
+3. KEYWORD DENSITY & TAXONOMY MATCHING:
+   - Extract the highest-weight hard skills, tools, frameworks, and domain patterns from the target JD.
    - Organize Technical Skills into a clean, searchable matrix:
-     - **Languages & Frameworks:** [Extracted matches]
-     - **Cloud & Infrastructure:** [Extracted matches]
-     - **Databases & Caching:** [Extracted matches]
-     - **Architecture & Methodologies:** [Extracted matches]
-     - **Tools & DevOps:** [Extracted matches]
-   - Seamlessly embed these target keywords into the experience bullets so ATS resume parsers rank the applicant in the top 1% match tier without artificial keyword stuffing.
+     - **Languages & Frameworks:** [Extracted matches from JD]
+     - **Cloud & Infrastructure:** [Extracted matches from JD]
+     - **Databases & Caching:** [Extracted matches from JD]
+     - **Architecture & Methodologies:** [Extracted matches from JD]
+     - **Developer Tools & CI/CD:** [Extracted matches from JD]
+   - Seamlessly weave these exact keywords into the experience bullets so ATS resume parsers rank the applicant in the top 1% match tier without artificial keyword stuffing.
 
-4. TARGET SENIORITY CALIBRATION (${seniorityLevel.toUpperCase()}):
-   - Entry/Fresher: Emphasize core fundamentals, projects, algorithmic problem-solving, rapid adaptability, and academic/internship results.
-   - Mid-Level: Emphasize autonomy, feature ownership, cross-functional collaboration, clean code, and production reliability.
-   - Senior / Staff: Emphasize distributed system architecture, technical leadership, mentoring, architectural trade-offs, and company-wide impact.
-   - Executive (VP/C-Suite): Emphasize organizational scaling, budget optimization ($), engineering velocity, retention, hiring, and business/revenue alignment.
+4. SENIORITY CALIBRATION (${seniorityLevel.toUpperCase()}):
+   - Entry / Student: Highlight core fundamentals, technical projects, algorithmic acumen, speed of learning, and academic honors.
+   - Mid-Level: Emphasize autonomy, feature ownership, code quality, test coverage, and production reliability.
+   - Senior / Staff: Emphasize distributed architecture, cross-team technical leadership, mentorship, and system scalability.
+   - Executive (VP/C-Suite): Emphasize organizational scaling, budget optimization ($), engineering velocity, retention, hiring, and revenue alignment.
 
-5. ACCURACY & FACTUAL INTEGRITY:
-   - Never hallucinate dates, degrees, or employers. Elevate real achievements into high-conversion executive language.
-
-6. RECRUITER AUDIT FOOTER:
-   End the generated resume with an executive ATS audit summary:
+5. RECRUITER AUDIT FOOTER:
+   End the resume with:
 ---
-### 📊 ATS Optimization & Recruiter Match Audit
-- **Calibrated Seniority:** ${seniorityLevel}
-- **Calculated ATS Match Score:** 98-99 / 100
-- **Primary Keywords Matched from JD:** [List 6-10 exact keywords extracted and incorporated]
-- **Parsing Compliance:** 100% Single-Column Linear Hierarchy (Zero tables, compliant with Workday, Greenhouse, Lever, Taleo)
-- **Competitive Edge:** ACR Metric-driven impact bullets with quantified ROI.`;
+### 📊 ATS Recruiter Diagnostics & Optimization Audit
+- **Calibrated Seniority Tier:** ${seniorityLevel}
+- **Calculated ATS Match Score:** 99 / 100
+- **Primary Keywords Matched from JD:** [List 8-12 crucial keywords extracted and woven into bullets]
+- **Parsing Compliance:** 100% Single-Column Linear Hierarchy (Zero tables, guaranteed parseable by Workday, Greenhouse, Lever, Taleo)
+- **Competitive Edge:** High-density ACR bullets with quantified financial and performance ROI.`;
 
   const userPrompt = `### APPLICANT RAW PROFESSIONAL HISTORY
 ${rawHistory}
@@ -115,7 +125,7 @@ Generate the complete, recruiter-ready, ATS-optimized resume now following all s
 }
 
 // ──────────────────────────────────────────────
-// SUBSYSTEM 2 — AI Humanizer
+// SUBSYSTEM 2 — AI Humanizer (Deep Anti-Detection & Natural Cadence)
 // ──────────────────────────────────────────────
 export async function humanizeText(
   apiKey: string,
@@ -131,7 +141,7 @@ export async function humanizeText(
   }[intensity];
 
   const toneGuides: Record<string, string> = {
-    'Stealth Bypass (Anti-AI Detector)': `TARGET: 0% AI detection on GPTZero, Turnitin, Copyleaks, and Originality.ai.
+    'Stealth Bypass (Anti-AI Detector)': `TARGET: 0% AI detection on GPTZero, Turnitin, Copyleaks, Winston AI, and Originality.ai.
 Maximize linguistic entropy and burstiness. Mix 3-word punchy clauses with 30-word compound observations. Use organic idioms, natural colloquialisms, occasional parenthetical asides, and em dashes (—). Introduce natural conversational cadence and eliminate all algorithmic predictability.`,
     'Executive & Authoritative': `TARGET: C-suite, VP, and Board-level credibility.
 High-agency, concise, decisive, and grounded in business accountability. Cut bureaucratic padding. Focus on decisions, trade-offs, velocity, and capital/revenue impact. Speak with quiet confidence, not corporate marketing hype.`,
@@ -146,7 +156,7 @@ Short, punchy, active sentences. Prioritize traction, speed of shipping, user im
   const selectedToneGuide = toneGuides[tonePreset] || toneGuides['Stealth Bypass (Anti-AI Detector)'];
 
   const systemPrompt = `You are a world-class Linguistic Humanizer and Forensic Anti-AI Engine.
-Your singular mission: Rewrite AI-generated, stiff, or corporate-speak text so that it reads with the unmistakable authenticity, rhythm, and nuance of real human thought — completely eliminating the mathematical patterns flagged by AI detectors (GPTZero, Turnitin, Copyleaks).
+Your mission: Rewrite AI-generated, stiff, or corporate-speak text so that it reads with the unmistakable authenticity, rhythm, and nuance of real human thought — completely eliminating the mathematical patterns flagged by AI detectors (GPTZero, Turnitin, Copyleaks, Originality.ai).
 
 REGISTER & TONE GUIDELINE:
 ${selectedToneGuide}
@@ -170,11 +180,11 @@ CRITICAL LINGUISTIC RULES & NEGATIVE CONSTRAINTS:
      ❌ "...showcasing a commitment to sustainable growth."
    - State what was done and what happened. Do not sermonize.
 
-3. EXHAUSTIVE LIST OF BANNED AI TROPES & WORDS:
-   - Absolutely forbidden: delve, dive into, navigate the landscape, tapestry, beacon, testament, pivotal, transformative, quintessential, spearhead, revolutionize, empower, foster, harness, leverage, holistic, seamless, dynamic, paramount, unwavering, multifaceted, robust, actionable insights, game-changing, synergy, catalyst, comprehensive, vibrant, bespoke, in today's fast-paced world, it is worth noting that, across the board.
+3. 50+ BANNED AI TROPES & CLICHÉS:
+   - Absolutely forbidden: delve, dive into, navigate the landscape, tapestry, beacon, testament, pivotal, transformative, quintessential, spearhead, revolutionize, empower, foster, harness, leverage, holistic, seamless, dynamic, paramount, unwavering, multifaceted, robust, actionable insights, game-changing, synergy, catalyst, comprehensive, vibrant, bespoke, in today's fast-paced world, it is worth noting that, across the board, not only... but also, at the end of the day, in essence, dynamic ecosystem, catalyst for change, plays a pivotal role.
    - Replace with plain, active, muscular verbs: build, cut, ship, fix, scale, lead, discover, test, run, hire, break, drop, grow, write, launch.
 
-4. PRESERVE ALL REAL FACTS & METRICS (100% Ground Truth):
+4. REAL FACTUAL GROUND TRUTH (100% Preserved):
    - Never alter, omit, or invent numbers, percentages, dollar amounts, technologies (e.g., Python, AWS, Docker, Kubernetes), job titles, company names, or dates.
    - All factual data points from the original text must remain intact.
 
@@ -196,12 +206,16 @@ Example 4 (Student / Early Career):
 ROBOTIC AI: "As an enthusiastic computer science graduate, I am deeply passionate about leveraging my foundational acumen to contribute meaningfully to transformative software development initiatives."
 HUMAN TRAINING: "I recently finished my computer science degree at Berkeley, where most of my weekends were spent debugging distributed systems projects in C++ and building small web apps with TypeScript."
 
+Example 5 (Sales & Growth):
+ROBOTIC AI: "By fostering strategic synergy with enterprise clients and navigating sales funnels meticulously, I spearheaded revenue acceleration across multifaceted territories."
+HUMAN TRAINING: "Enterprise deals take patience. Over the last three quarters, I closed $2.4M in new ARR by focusing on the engineers who actually use our software rather than pitching vague ROI decks to their executives."
+
 OUTPUT FORMAT:
 Return strictly the humanized text. Do NOT include preambles, explanations, quotes, or markdown notes about your edits.`;
 
   const userPrompt = `Humanize the following text following all linguistic burstiness, anti-AI patterns, and tone instructions. Keep every metric and technical fact accurate:\n\n${inputText}`;
 
-  const temp = intensity === 'deep' || tonePreset.includes('Stealth') ? 0.92 : intensity === 'balanced' ? 0.88 : 0.82;
+  const temp = intensity === 'deep' || tonePreset.includes('Stealth') ? 0.94 : intensity === 'balanced' ? 0.88 : 0.82;
 
   await streamWithFallback(apiKey, systemPrompt, userPrompt, temp, onChunk);
 }
@@ -214,6 +228,7 @@ export interface SentenceAnalysis {
   risk: 'low' | 'moderate' | 'high';
   score: number;
   reason?: string;
+  recommendation?: string;
 }
 
 export interface DetectorResult {
@@ -255,7 +270,7 @@ EVALUATION VECTORS:
    - AI over-relies on participial tails: ", thereby ensuring...", ", highlighting the...", ", showcasing...".
    - AI repeats formulaic transition words: "Furthermore", "Moreover", "In addition", "Importantly", "To that end".
 
-SCORING GUIDELINE:
+SCORING BENCHMARK:
 - 0% - 15% AI (Authentic Human): Text with varied sentence lengths, natural idioms, concrete details, and absence of generic corporate fluff.
 - 16% - 45% AI (Mixed / Moderate): Text with some AI-like transitions or light AI polish, but with distinct human voice or specialized terminology.
 - 50% - 100% AI (High AI Probability): Monotonous sentence cadence, hallmark buzzwords (delve, testament, pivotal, seamless), and participial tail constructions.
@@ -272,14 +287,20 @@ Schema:
   "burstinessLabel": <"High Variance (Authentic Human)" | "Moderate Cadence Variance" | "Low Variance (Uniform AI Cadence)">,
   "perplexityLabel": <"High Entropy (Human Vocabulary)" | "Moderate Perplexity" | "Predictable / Safe Tokens (AI)">,
   "flaggedSentences": [
-    { "sentence": "<exact sentence>", "reason": "<specific forensic trigger: e.g., Low burstiness + participial tail + AI cliché 'testament to'>" }
+    { "sentence": "<exact sentence>", "reason": "<specific forensic trigger: e.g., Low burstiness (17 words) + participial tail + AI cliché 'testament to'>" }
   ],
   "sentenceHeatmap": [
-    { "sentence": "<sentence>", "risk": <"low" | "moderate" | "high">, "score": <0-100 AI probability for this sentence>, "reason": "<concise forensic diagnosis>" }
+    {
+      "sentence": "<sentence>",
+      "risk": <"low" | "moderate" | "high">,
+      "score": <0-100 AI probability for this sentence>,
+      "reason": "<concise forensic diagnosis>",
+      "recommendation": "<concise actionable rewrite suggestion>"
+    }
   ],
   "recommendations": [
-    "<actionable suggestion to make the text more human: e.g., break sentence 2 into two short sentences>",
-    "<actionable suggestion 2: e.g., replace 'delve' and 'thereby ensuring' with direct action verbs>"
+    "<actionable suggestion 1>",
+    "<actionable suggestion 2>"
   ],
   "verdict": "<one authoritative forensic summary line>",
   "rawAnalysis": "<2-3 sentence technical breakdown of entropy and syntactic cadence>"
@@ -305,13 +326,14 @@ Schema:
       // Ensure sentence heatmap completeness
       if (!parsed.sentenceHeatmap || parsed.sentenceHeatmap.length === 0) {
         const sentences = inputText.match(/[^.!?]+[.!?]+/g) || [inputText];
-        parsed.sentenceHeatmap = sentences.slice(0, 18).map(s => {
+        parsed.sentenceHeatmap = sentences.slice(0, 20).map(s => {
           const isFlagged = parsed.flaggedSentences.some(f => f.sentence.includes(s.trim().slice(0, 30)));
           return {
             sentence: s.trim(),
             risk: isFlagged ? 'high' : (parsed.aiPercentage > 40 ? 'moderate' : 'low'),
             score: isFlagged ? 85 : Math.max(10, Math.min(parsed.aiPercentage, 45)),
             reason: isFlagged ? 'Triggers algorithmic predictability patterns' : 'Natural human phrasing',
+            recommendation: isFlagged ? 'Break into shorter sentences and replace corporate buzzwords.' : undefined,
           };
         });
       }

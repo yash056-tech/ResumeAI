@@ -317,6 +317,11 @@ export default function Detector({ apiKey, initialText = '', onSendToHumanizer, 
                 {selectedSentence.reason && (
                   <p className={styles.inspectReason}><strong>Trigger Reason:</strong> {selectedSentence.reason}</p>
                 )}
+                {selectedSentence.recommendation && (
+                  <p className={styles.inspectRec} style={{ color: 'var(--accent3)', marginTop: '0.4rem', fontSize: '0.82rem' }}>
+                    <strong>Suggested Human Rewrite:</strong> {selectedSentence.recommendation}
+                  </p>
+                )}
               </div>
             )}
           </div>

@@ -135,18 +135,18 @@ export async function humanizeText(
   onChunk: (text: string) => void
 ): Promise<void> {
   const intensityGuide = {
-    light: 'Remove obvious robotic transitions, corporate buzzwords, and repetitive qualifiers. Keep existing sentence boundaries mostly intact while smoothing cadence.',
-    balanced: 'Vary sentence lengths substantially. Interleave short punchy sentences (3-7 words) with rich contextual ones (22-32 words). Strip all clichés, robotic participial tails, and artificial symmetries.',
-    deep: 'Completely de-synthesize the syntax. Re-structure thoughts from the ground up as if an authentic, articulate human practitioner wrote them in their distinct personal voice with high linguistic entropy.',
+    light: 'Focus on removing obvious robotic buzzwords while keeping existing sentence boundaries mostly intact.',
+    balanced: 'Vary sentence lengths naturally. Interleave short punchy sentences (3-6 words) with nuanced thoughts (18-28 words). Express all points in authentic, conversational human phrasing.',
+    deep: 'Completely de-synthesize the syntax. Re-structure thoughts from the ground up as if an articulate, experienced human practitioner is explaining their real-world journey to a peer with maximum linguistic entropy.',
   }[intensity];
 
   const toneGuides: Record<string, string> = {
-    'Stealth Bypass (Anti-AI Detector)': `TARGET: 0% AI detection on GPTZero, Turnitin, Copyleaks, Winston AI, and Originality.ai.
-Maximize linguistic entropy and burstiness. Mix 3-word punchy clauses with 30-word compound observations. Use organic idioms, natural colloquialisms, occasional parenthetical asides, and em dashes (—). Introduce natural conversational cadence and eliminate all algorithmic predictability.`,
+    'Stealth Bypass (Anti-AI Detector)': `TARGET: 0% - 15% AI detection score on GPTZero, Turnitin, Copyleaks, Winston AI, and Originality.ai.
+Focus on organic idioms ("untangling messy problems", "move the needle", "roll up my sleeves"), natural connectors ("In practice,", "Instead of,", "We found that,"), em-dashes (—), and natural sentence fragments. Write with visceral human authenticity.`,
     'Executive & Authoritative': `TARGET: C-suite, VP, and Board-level credibility.
-High-agency, concise, decisive, and grounded in business accountability. Cut bureaucratic padding. Focus on decisions, trade-offs, velocity, and capital/revenue impact. Speak with quiet confidence, not corporate marketing hype.`,
+High-agency, concise, decisive, and grounded in business accountability. Cut bureaucratic padding. Focus on decisions, trade-offs, velocity, and capital/revenue impact. Speak with quiet confidence.`,
     'Natural & Conversational': `TARGET: Authentic, human peer-to-peer communication.
-Warm, approachable, and engaging. Sound like an experienced professional speaking over coffee — grounded, humble, practical, and clear. Use natural phrasing and everyday professional vocabulary.`,
+Warm, approachable, and engaging. Sound like an experienced professional speaking over coffee — grounded, practical, clear, and relatable.`,
     'Direct & Technical': `TARGET: Senior Engineering, Architecture, and Research credibility.
 Zero fluff, zero marketing speak. High-signal engineering clarity. Describe technical mechanisms, architectures, bottlenecks, and measurable system outputs directly without pseudo-philosophical preamble.`,
     'Punchy Startup': `TARGET: Fast-paced founder & operator speed.
@@ -155,67 +155,37 @@ Short, punchy, active sentences. Prioritize traction, speed of shipping, user im
 
   const selectedToneGuide = toneGuides[tonePreset] || toneGuides['Stealth Bypass (Anti-AI Detector)'];
 
-  const systemPrompt = `You are a world-class Linguistic Humanizer and Forensic Anti-AI Engine.
-Your mission: Rewrite AI-generated, stiff, or corporate-speak text so that it reads with the unmistakable authenticity, rhythm, and nuance of real human thought — completely eliminating the mathematical patterns flagged by AI detectors (GPTZero, Turnitin, Copyleaks, Originality.ai).
+  const systemPrompt = `You are an elite Human Writer and Senior Professional Editor.
+Your objective: Take stiff, robotic, or AI-generated text and completely rewrite it so it sounds 100% authentically human — as if written by a thoughtful, articulate person speaking from direct personal experience.
 
-REGISTER & TONE GUIDELINE:
-${selectedToneGuide}
+NON-NEGOTIABLE HUMANIZING PRINCIPLES:
+1. FULL NARRATIVE & DETAIL FIDELITY:
+   - Do NOT summarize or condense into a dry 1-sentence snippet. Retain every single key achievement, thought, and detail from the input.
+   - Maintain approximately the same length and substance as the original text (target 85% to 110% of input length).
+   - If the input has multiple sentences, preserve each point's meaning while transforming the expression completely.
 
-INTENSITY LEVEL:
-${intensity.toUpperCase()} — ${intensityGuide}
+2. NATURAL HUMAN CADENCE (High Burstiness):
+   - Mix short, punchy statements (3-6 words) with longer, nuanced sentences (20-30 words).
+   - Use em-dashes (—) and natural transitions like "In practice,", "Instead of,", "We found that,", "That meant,".
+   - Use conversational human pacing devices and natural contractions ("didn't", "we've", "couldn't", "it's").
 
-CRITICAL LINGUISTIC RULES & NEGATIVE CONSTRAINTS:
+3. ABSOLUTE BAN ON ROBOTIC / AI PHRASES (50+ Blacklist):
+   - NEVER use: delve, testament to, spearheaded, synergies, holistic approach, navigating the landscape, game-changing, actionable insights, results-driven, in today's fast-paced world, furthermore, moreover, thereby ensuring, vibrant tapestry, catalyst for change, not only... but also, plays a pivotal role, underscores, paramount, unwavering, bespoke, multifaceted.
+   - Replace corporate jargon with plain, muscular, real-world language.
 
-1. FORCED BURSTINESS (Vary Sentence Lengths Radically):
-   - AI algorithms generate uniform sentence lengths (typically 15-22 words per sentence).
-   - Real human writing is irregular: alternate between very short sentences (3-7 words) and longer, multi-clause sentences (25-35 words).
-   - Use em dashes (—), colons, and parentheses to create natural human pacing.
+4. METRIC ACCURACY (100% Preserved):
+   - Retain every single number, percentage (%), dollar amount ($), technology name (e.g. Go, Kubernetes, Python, AWS), and date.
 
-2. TOTAL BAN ON "PARTICIPIAL TAILS" (AI's #1 Dead Giveaway):
-   - NEVER end sentences with moralizing or summative participial clauses, such as:
-     ❌ "...thereby ensuring organizational alignment."
-     ❌ "...highlighting the importance of seamless collaboration."
-     ❌ "...fostering a culture of continuous improvement."
-     ❌ "...underscoring a dedication to excellence."
-     ❌ "...showcasing a commitment to sustainable growth."
-   - State what was done and what happened. Do not sermonize.
+5. REGISTER SPECIFICATION:
+   ${selectedToneGuide}
+   Level: ${intensity.toUpperCase()} (${intensityGuide})
 
-3. 50+ BANNED AI TROPES & CLICHÉS:
-   - Absolutely forbidden: delve, dive into, navigate the landscape, tapestry, beacon, testament, pivotal, transformative, quintessential, spearhead, revolutionize, empower, foster, harness, leverage, holistic, seamless, dynamic, paramount, unwavering, multifaceted, robust, actionable insights, game-changing, synergy, catalyst, comprehensive, vibrant, bespoke, in today's fast-paced world, it is worth noting that, across the board, not only... but also, at the end of the day, in essence, dynamic ecosystem, catalyst for change, plays a pivotal role.
-   - Replace with plain, active, muscular verbs: build, cut, ship, fix, scale, lead, discover, test, run, hire, break, drop, grow, write, launch.
+6. OUTPUT FORMAT:
+   - Return ONLY the humanized text. No markdown fences, no preamble, no quote marks.`;
 
-4. REAL FACTUAL GROUND TRUTH (100% Preserved):
-   - Never alter, omit, or invent numbers, percentages, dollar amounts, technologies (e.g., Python, AWS, Docker, Kubernetes), job titles, company names, or dates.
-   - All factual data points from the original text must remain intact.
+  const userPrompt = `Rewrite this text in an authentic, natural human voice while keeping full detail and metrics:\n\n${inputText}`;
 
-FEW-SHOT HUMANIZING EXEMPLARS:
-
-Example 1 (Career / Executive Summary):
-ROBOTIC AI: "As a results-driven engineering leader, I have consistently leveraged cutting-edge microservice architectures to optimize organizational workflows, thereby fostering unprecedented operational efficiencies and driving business value across dynamic cross-functional initiatives."
-HUMAN TRAINING: "I lead backend engineering teams. Over the past six years, my focus has been simple: untangle bloated monoliths into clean Go microservices so teams can ship code daily without breaking production on Friday afternoon."
-
-Example 2 (Product / Customer Pitch):
-ROBOTIC AI: "In today's fast-paced digital ecosystem, delving into customer feedback is a testament to sustainable business growth, empowering stakeholders to unlock actionable insights and navigate multifaceted challenges seamlessly."
-HUMAN TRAINING: "Most metrics look fine on a dashboard until you actually talk to five frustrated users. Those conversations usually show you exactly what to fix first — and that is how we cut our onboarding churn by 35% in three months."
-
-Example 3 (Technical Incident / Engineering Practice):
-ROBOTIC AI: "Navigating complex database migrations necessitates meticulous risk mitigation strategies, which underscores the paramount importance of thorough schema validation and automated alerting protocols."
-HUMAN TRAINING: "If a database migration fails, everyone notices immediately. We learned that the hard way during a holiday traffic spike. Since then, no schema change touches production without shadow traffic tests and automated rollback triggers."
-
-Example 4 (Student / Early Career):
-ROBOTIC AI: "As an enthusiastic computer science graduate, I am deeply passionate about leveraging my foundational acumen to contribute meaningfully to transformative software development initiatives."
-HUMAN TRAINING: "I recently finished my computer science degree at Berkeley, where most of my weekends were spent debugging distributed systems projects in C++ and building small web apps with TypeScript."
-
-Example 5 (Sales & Growth):
-ROBOTIC AI: "By fostering strategic synergy with enterprise clients and navigating sales funnels meticulously, I spearheaded revenue acceleration across multifaceted territories."
-HUMAN TRAINING: "Enterprise deals take patience. Over the last three quarters, I closed $2.4M in new ARR by focusing on the engineers who actually use our software rather than pitching vague ROI decks to their executives."
-
-OUTPUT FORMAT:
-Return strictly the humanized text. Do NOT include preambles, explanations, quotes, or markdown notes about your edits.`;
-
-  const userPrompt = `Humanize the following text following all linguistic burstiness, anti-AI patterns, and tone instructions. Keep every metric and technical fact accurate:\n\n${inputText}`;
-
-  const temp = intensity === 'deep' || tonePreset.includes('Stealth') ? 0.94 : intensity === 'balanced' ? 0.88 : 0.82;
+  const temp = intensity === 'deep' || tonePreset.includes('Stealth') ? 0.92 : intensity === 'balanced' ? 0.88 : 0.82;
 
   await streamWithFallback(apiKey, systemPrompt, userPrompt, temp, onChunk);
 }

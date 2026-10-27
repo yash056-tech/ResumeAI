@@ -119,6 +119,30 @@ export default function Humanizer({ apiKey, initialText = '', onSendToDetector, 
     }
   };
 
+  const handleAlternativeVoice = async () => {
+    if (!input.trim()) return;
+    if (onRequireAuth && !onRequireAuth(() => handleAlternativeVoice(), 'Generate Alternative Voice')) {
+      return;
+    }
+    const currentIdx = TONES.findIndex(t => t.id === selectedTone);
+    const nextTone = TONES[(currentIdx + 1) % TONES.length];
+    setSelectedTone(nextTone.id);
+    setOutput('');
+    setLoading(true);
+    const toastId = toast.loading(`Re-humanizing with ${nextTone.label}...`);
+    try {
+      await humanizeText(apiKey, input, nextTone.id, intensity, (chunk) => {
+        setOutput(prev => prev + chunk);
+        setTimeout(() => outputRef.current?.scrollTo({ top: outputRef.current.scrollHeight, behavior: 'smooth' }), 50);
+      });
+      toast.success(`Rewritten with ${nextTone.label}!`, { id: toastId });
+    } catch (err: any) {
+      toast.error(err?.message ?? 'Alternative voice generation failed.', { id: toastId });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const copyOutput = () => {
     navigator.clipboard.writeText(output);
     toast.success('Copied humanized text!');
@@ -279,6 +303,14 @@ export default function Humanizer({ apiKey, initialText = '', onSendToDetector, 
                   className={styles.polishBtn}
                 >
                   <Wand2 size={13} /> Deeper Polish
+                </button>
+                <button
+                  onClick={handleAlternativeVoice}
+                  title="Switch to another human tone preset"
+                  disabled={loading}
+                  className={styles.voiceBtn}
+                >
+                  <Sparkles size={13} /> Switch Style
                 </button>
                 <button onClick={copyOutput} title="Copy to clipboard">
                   <Copy size={13} /> Copy

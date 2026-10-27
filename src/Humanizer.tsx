@@ -1,9 +1,10 @@
 import { useState, useRef } from 'react';
 import {
   Wand2, Copy, RotateCcw, ArrowRight, ShieldCheck, Sparkles,
-  Sliders, Gauge, Send, AlertCircle
+  Sliders, Gauge, Send, AlertCircle, Upload, X
 } from 'lucide-react';
 import { humanizeText } from './gemini';
+import { extractTextFromFile, type ExtractedFileContent } from './fileParser';
 import toast from 'react-hot-toast';
 import styles from './Humanizer.module.css';
 
@@ -36,7 +37,36 @@ export default function Humanizer({ apiKey, initialText = '', onSendToDetector, 
   const [loading, setLoading] = useState(false);
   const outputRef = useRef<HTMLDivElement>(null);
 
+  // File Upload state
+  const [uploadedFile, setUploadedFile] = useState<ExtractedFileContent | null>(null);
+  const [extractingFile, setExtractingFile] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const sampleStiffText = `As a results-driven professional with a proven track record of leveraging synergies across dynamic cross-functional teams, I have consistently spearheaded innovative initiatives that have delivered actionable insights and game-changing outcomes. With a holistic approach to navigating the landscape of modern enterprise challenges, I am passionate about delving into complex problems and transforming them into scalable solutions. It is a testament to my dedication that I have successfully managed 14 microservices in Go and Kubernetes, reducing latency by 45% while simultaneously optimizing workflows to drive organizational efficiency.`;
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setExtractingFile(true);
+    const toastId = toast.loading(`Parsing ${file.name}...`);
+    try {
+      const extracted = await extractTextFromFile(file, apiKey);
+      if (!extracted.text.trim()) {
+        toast.error('Could not extract readable text from this file.', { id: toastId });
+        return;
+      }
+      setUploadedFile(extracted);
+      setInput(extracted.text);
+      const wordCount = extracted.text.split(/\s+/).filter(Boolean).length;
+      toast.success(`Loaded ${file.name} (${wordCount} words)!`, { id: toastId });
+    } catch (err: any) {
+      toast.error(err?.message || 'File parsing failed.', { id: toastId });
+    } finally {
+      setExtractingFile(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   // Count tropes in input
   const foundTropes = BANNED_TROPES.filter(t => input.toLowerCase().includes(t));
@@ -107,6 +137,15 @@ export default function Humanizer({ apiKey, initialText = '', onSendToDetector, 
 
       {/* Main Workspace */}
       <div className={styles.workspaceGrid}>
+        {/* Hidden file input */}
+        <input
+          type="file"
+          ref={fileInputRef}
+          accept="*/*"
+          onChange={handleFileUpload}
+          style={{ display: 'none' }}
+        />
+
         {/* Left Input */}
         <div className={styles.pane}>
           <div className={styles.paneHeader}>
@@ -118,18 +157,49 @@ export default function Humanizer({ apiKey, initialText = '', onSendToDetector, 
                 </span>
               )}
             </div>
-            <button
-              className={styles.exBtn}
-              onClick={() => setInput(sampleStiffText)}
-            >
-              Load AI Cliché Sample
-            </button>
+            <div className={styles.paneActions}>
+              <button
+                type="button"
+                className={styles.uploadBtn}
+                onClick={() => fileInputRef.current?.click()}
+                disabled={extractingFile}
+                title="Upload any file: PDF, Word DOCX, TXT, MD, RTF"
+              >
+                <Upload size={12} /> {extractingFile ? 'Extracting...' : 'Upload File (PDF/DOCX/TXT)'}
+              </button>
+              <button
+                className={styles.exBtn}
+                onClick={() => {
+                  setInput(sampleStiffText);
+                  setUploadedFile(null);
+                }}
+              >
+                Load AI Sample
+              </button>
+            </div>
           </div>
+
+          {/* Uploaded File Chip */}
+          {uploadedFile && (
+            <div className={styles.fileChip}>
+              <span className={styles.fileName}>
+                📄 {uploadedFile.fileName} ({uploadedFile.fileSize} • {uploadedFile.fileType})
+              </span>
+              <button
+                type="button"
+                className={styles.chipRemove}
+                onClick={() => setUploadedFile(null)}
+                title="Clear file link"
+              >
+                <X size={13} />
+              </button>
+            </div>
+          )}
 
           <textarea
             className={styles.textarea}
             rows={14}
-            placeholder="Paste your AI-generated draft, robotic cover letter, or corporate-speak resume bullet here..."
+            placeholder="Paste your AI-generated draft, robotic cover letter, or corporate-speak resume bullet here — or click 'Upload File' to parse any document directly..."
             value={input}
             onChange={e => setInput(e.target.value)}
           />

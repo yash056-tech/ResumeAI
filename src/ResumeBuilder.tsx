@@ -2,9 +2,12 @@ import { useState, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import {
   FileText, Zap, Copy, Download, RotateCcw, Printer, Bookmark,
-  Send, CheckCircle2, Sparkles, Layers, Award, FileSpreadsheet
+  Send, CheckCircle2, Sparkles, Layers, Award, FileSpreadsheet,
+  Upload, X, BookOpen, Star, ArrowUpRight
 } from 'lucide-react';
 import { buildATSResume } from './gemini';
+import { extractTextFromFile, type ExtractedFileContent } from './fileParser';
+import { SAMPLE_TEMPLATES, type SampleResumeTemplate } from './resumeTemplates';
 import toast from 'react-hot-toast';
 import confetti from 'canvas-confetti';
 import styles from './ResumeBuilder.module.css';
@@ -33,6 +36,18 @@ export default function ResumeBuilder({
   const [loading, setLoading] = useState(false);
   const outputRef = useRef<HTMLDivElement>(null);
 
+  // File Upload states
+  const [historyFile, setHistoryFile] = useState<ExtractedFileContent | null>(null);
+  const [jdFile, setJdFile] = useState<ExtractedFileContent | null>(null);
+  const [extractingHistory, setExtractingHistory] = useState(false);
+  const [extractingJd, setExtractingJd] = useState(false);
+  const historyFileInputRef = useRef<HTMLInputElement>(null);
+  const jdFileInputRef = useRef<HTMLInputElement>(null);
+
+  // Sample Templates Modal state
+  const [showTemplatesModal, setShowTemplatesModal] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+
   const exampleHistory = `Name: Alex Rivera
 Title: Senior Software Engineer
 Email: alex.rivera@email.com | GitHub: github.com/arivera | LinkedIn: linkedin.com/in/arivera
@@ -41,7 +56,7 @@ Location: San Francisco, CA
 EXPERIENCE:
 Company: TechCorp Solutions (2021–Present)
 Role: Senior Software Engineer
-- Led backend development for payment processing system processing \$250M annually
+- Led backend development for payment processing system processing $250M annually
 - Worked with Go, Python, microservices, and Docker containerization
 - Reduced API response times by 55% via Redis caching layer
 - Mentored 4 junior developers and led weekly architectural design reviews
@@ -76,6 +91,82 @@ Preferred:
 - PCI-DSS compliance experience
 - Open-source contributions and technical mentorship`;
 
+  // Handle file uploads
+  const handleHistoryFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setExtractingHistory(true);
+    const toastId = toast.loading(`Parsing ${file.name} (PDF/Word/Text)...`);
+
+    try {
+      const extracted = await extractTextFromFile(file, apiKey);
+      if (!extracted.text.trim()) {
+        toast.error('Could not extract readable text from this file.', { id: toastId });
+        return;
+      }
+      setHistoryFile(extracted);
+      setRawHistory(extracted.text);
+      const wordCount = extracted.text.split(/\s+/).filter(Boolean).length;
+      toast.success(`Loaded ${file.name} (${wordCount} words extracted)!`, { id: toastId });
+    } catch (err: any) {
+      toast.error(err?.message || 'File parsing failed.', { id: toastId });
+    } finally {
+      setExtractingHistory(false);
+      if (historyFileInputRef.current) historyFileInputRef.current.value = '';
+    }
+  };
+
+  const handleJdFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setExtractingJd(true);
+    const toastId = toast.loading(`Parsing ${file.name}...`);
+
+    try {
+      const extracted = await extractTextFromFile(file, apiKey);
+      if (!extracted.text.trim()) {
+        toast.error('Could not extract readable text from this file.', { id: toastId });
+        return;
+      }
+      setJdFile(extracted);
+      setJd(extracted.text);
+      const wordCount = extracted.text.split(/\s+/).filter(Boolean).length;
+      toast.success(`Loaded target JD from ${file.name} (${wordCount} words)!`, { id: toastId });
+    } catch (err: any) {
+      toast.error(err?.message || 'File parsing failed.', { id: toastId });
+    } finally {
+      setExtractingJd(false);
+      if (jdFileInputRef.current) jdFileInputRef.current.value = '';
+    }
+  };
+
+  const handleLoadTemplate = (tpl: SampleResumeTemplate) => {
+    setRawHistory(tpl.rawHistory);
+    setJd(tpl.sampleJD);
+    setSeniority(tpl.seniority);
+    setHistoryFile({
+      fileName: `${tpl.title.replace(/[^a-zA-Z0-9]/g, '_')}_Template.txt`,
+      fileSize: '4.2 KB',
+      fileType: 'ATS_TEMPLATE',
+      text: tpl.rawHistory
+    });
+    setJdFile({
+      fileName: `${tpl.title.replace(/[^a-zA-Z0-9]/g, '_')}_TargetJD.txt`,
+      fileSize: '2.1 KB',
+      fileType: 'JD_TEMPLATE',
+      text: tpl.sampleJD
+    });
+    setShowTemplatesModal(false);
+    toast.success(`Loaded "${tpl.title}" template & matching target JD!`);
+  };
+
+  const categories = ['All', ...Array.from(new Set(SAMPLE_TEMPLATES.map(t => t.category)))];
+  const filteredTemplates = selectedCategory === 'All'
+    ? SAMPLE_TEMPLATES
+    : SAMPLE_TEMPLATES.filter(t => t.category === selectedCategory);
+
   const handleBuild = async () => {
     if (!rawHistory.trim() || !jd.trim()) {
       toast.error('Please provide both your professional history and target JD.');
@@ -106,7 +197,6 @@ Preferred:
   };
 
   const copyPlainText = () => {
-    // Strip markdown formatting for direct Workday / job portal pasting
     const plain = output
       .replace(/^#{1,6}\s+/gm, '')
       .replace(/\*\*(.*?)\*\*/g, '$1')
@@ -134,7 +224,7 @@ Preferred:
       return;
     }
     if (onSaveResume) {
-      onSaveResume('Tailored Resume', seniority, output, 96);
+      onSaveResume('Tailored Resume', seniority, output, 98);
       toast.success('Saved to your ResumeAI Workspace!');
     } else {
       toast.success('Resume saved locally!');
@@ -143,6 +233,22 @@ Preferred:
 
   return (
     <div className={styles.container}>
+      {/* Hidden file inputs for universal file uploads */}
+      <input
+        type="file"
+        ref={historyFileInputRef}
+        accept="*/*"
+        onChange={handleHistoryFileUpload}
+        style={{ display: 'none' }}
+      />
+      <input
+        type="file"
+        ref={jdFileInputRef}
+        accept="*/*"
+        onChange={handleJdFileUpload}
+        style={{ display: 'none' }}
+      />
+
       {/* Top Controls Toolbar */}
       <div className={styles.toolbar}>
         <div className={styles.toolGroup}>
@@ -183,49 +289,128 @@ Preferred:
             </button>
           </div>
         </div>
+
+        {/* Sample Templates Modal Trigger */}
+        <div className={styles.templateActionGroup}>
+          <button
+            className={styles.sampleTemplatesBtn}
+            onClick={() => setShowTemplatesModal(true)}
+            title="Browse pre-built ATS-friendly resume templates with 95+ scores"
+          >
+            <BookOpen size={14} /> Sample Resume Templates ({SAMPLE_TEMPLATES.length})
+          </button>
+        </div>
       </div>
 
       {/* Main Grid: Inputs + Output */}
       <div className={styles.mainGrid}>
         {/* Left Inputs */}
         <div className={styles.inputCol}>
+          {/* Card 1: Professional History */}
           <div className={styles.inputCard}>
             <div className={styles.cardHeader}>
               <label className={styles.label}>
                 <FileText size={15} /> 1. Professional History & Metrics
               </label>
-              <button
-                className={styles.exBtn}
-                onClick={() => setRawHistory(exampleHistory)}
-              >
-                Load Example History
-              </button>
+              <div className={styles.cardActions}>
+                <button
+                  type="button"
+                  className={styles.uploadBtn}
+                  onClick={() => historyFileInputRef.current?.click()}
+                  disabled={extractingHistory}
+                  title="Upload any file: PDF, Word (.docx), TXT, MD, RTF, or Image"
+                >
+                  <Upload size={13} /> {extractingHistory ? 'Extracting...' : 'Upload File (PDF/DOCX/TXT)'}
+                </button>
+                <button
+                  type="button"
+                  className={styles.exBtn}
+                  onClick={() => {
+                    setRawHistory(exampleHistory);
+                    setHistoryFile(null);
+                  }}
+                >
+                  Load Example
+                </button>
+              </div>
             </div>
+
+            {/* Uploaded File Chip if present */}
+            {historyFile && (
+              <div className={styles.fileChip}>
+                <span className={styles.fileName}>
+                  📄 {historyFile.fileName} ({historyFile.fileSize} • {historyFile.fileType})
+                </span>
+                <button
+                  type="button"
+                  className={styles.chipRemove}
+                  onClick={() => setHistoryFile(null)}
+                  title="Clear file link"
+                >
+                  <X size={13} />
+                </button>
+              </div>
+            )}
+
             <textarea
               className={styles.textarea}
               rows={9}
-              placeholder="Paste your raw career history, roles, skills, and projects. Don't worry about clean formatting — the ATS engine structures everything into ACR framework."
+              placeholder="Paste your raw career history or click 'Upload File' to parse your existing resume (PDF, Word DOCX, TXT, etc.). The engine structures everything into the high-conversion ACR framework."
               value={rawHistory}
               onChange={e => setRawHistory(e.target.value)}
             />
           </div>
 
+          {/* Card 2: Target Job Description */}
           <div className={styles.inputCard}>
             <div className={styles.cardHeader}>
               <label className={styles.label}>
                 <Sparkles size={15} /> 2. Target Job Description (JD)
               </label>
-              <button
-                className={styles.exBtn}
-                onClick={() => setJd(exampleJD)}
-              >
-                Load Target FinTech JD
-              </button>
+              <div className={styles.cardActions}>
+                <button
+                  type="button"
+                  className={styles.uploadBtn}
+                  onClick={() => jdFileInputRef.current?.click()}
+                  disabled={extractingJd}
+                  title="Upload target JD document (PDF, Word, TXT, or web clipping)"
+                >
+                  <Upload size={13} /> {extractingJd ? 'Extracting...' : 'Upload JD File'}
+                </button>
+                <button
+                  type="button"
+                  className={styles.exBtn}
+                  onClick={() => {
+                    setJd(exampleJD);
+                    setJdFile(null);
+                  }}
+                >
+                  Load FinTech JD
+                </button>
+              </div>
             </div>
+
+            {/* Uploaded JD File Chip */}
+            {jdFile && (
+              <div className={styles.fileChip}>
+                <span className={styles.fileName}>
+                  💼 {jdFile.fileName} ({jdFile.fileSize} • {jdFile.fileType})
+                </span>
+                <button
+                  type="button"
+                  className={styles.chipRemove}
+                  onClick={() => setJdFile(null)}
+                  title="Clear file link"
+                >
+                  <X size={13} />
+                </button>
+              </div>
+            )}
+
             <textarea
               className={styles.textarea}
               rows={8}
-              placeholder="Paste the full job description. The engine extracts high-priority hard skills, frameworks, and methodologies and weaves them in seamlessly."
+              placeholder="Paste the target job description or click 'Upload JD File'. The engine extracts high-priority hard skills, frameworks, and methodologies and weaves them in seamlessly."
               value={jd}
               onChange={e => setJd(e.target.value)}
             />
@@ -309,7 +494,14 @@ Preferred:
               <div className={styles.emptyPrompt}>
                 <FileText size={42} className={styles.emptyIcon} />
                 <h4>Your ATS Resume Document Preview</h4>
-                <p>Provide your experience and target JD, then click "Generate ATS-Optimized Resume" to view the parsed, recruiter-ready document.</p>
+                <p>Provide your experience or upload your existing resume (PDF/Word/TXT) and target JD, then click "Generate ATS-Optimized Resume" to view the parsed, recruiter-ready document.</p>
+                <button
+                  type="button"
+                  className={styles.modalPromptBtn}
+                  onClick={() => setShowTemplatesModal(true)}
+                >
+                  <BookOpen size={14} /> Or Browse Sample Resume Templates
+                </button>
               </div>
             )}
             {output && (
@@ -337,6 +529,88 @@ Preferred:
           )}
         </div>
       </div>
+
+      {/* Sample Resume Templates Modal */}
+      {showTemplatesModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowTemplatesModal(false)}>
+          <div className={styles.modalCard} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <div>
+                <div className={styles.modalBadge}>
+                  <Star size={13} /> Industry-Validated ATS Formats
+                </div>
+                <h2 className={styles.modalTitle}>ATS-Friendly Sample Resume Templates</h2>
+                <p className={styles.modalSubtitle}>
+                  Select from pre-configured, ATS-tested resume profiles with matching target job descriptions. 1-click loading automatically configures professional history, target JD, and seniority calibration.
+                </p>
+              </div>
+              <button
+                className={styles.modalCloseBtn}
+                onClick={() => setShowTemplatesModal(false)}
+                title="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Category Filter Tabs */}
+            <div className={styles.categoryTabs}>
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  className={`${styles.categoryTab} ${selectedCategory === cat ? styles.categoryActive : ''}`}
+                  onClick={() => setSelectedCategory(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Templates Grid */}
+            <div className={styles.templatesGrid}>
+              {filteredTemplates.map(tpl => (
+                <div key={tpl.id} className={styles.templateCard}>
+                  <div className={styles.tplCardTop}>
+                    <span className={styles.tplCategory}>{tpl.category}</span>
+                    <span className={styles.tplScoreBadge}>
+                      <Award size={12} /> {tpl.atsScore}/100 ATS Score
+                    </span>
+                  </div>
+
+                  <h3 className={styles.tplTitle}>{tpl.title}</h3>
+                  <div className={styles.tplSeniority}>
+                    Seniority: <strong>{tpl.seniority}</strong>
+                  </div>
+
+                  <p className={styles.tplHighlight}>"{tpl.highlight}"</p>
+
+                  <div className={styles.tplSnippet}>
+                    {tpl.rawHistory.slice(0, 190)}...
+                  </div>
+
+                  <button
+                    className={styles.tplLoadBtn}
+                    onClick={() => handleLoadTemplate(tpl)}
+                  >
+                    <span>Load Template & Target JD</span>
+                    <ArrowUpRight size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className={styles.modalFooter}>
+              <span>All templates follow strict Single-Column ATS standards compliant with Workday, Greenhouse, Lever, and Taleo.</span>
+              <button
+                className={styles.modalDismissBtn}
+                onClick={() => setShowTemplatesModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

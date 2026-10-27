@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   ScanSearch, AlertTriangle, CheckCircle2, Send,
-  Activity
+  Activity, Upload, X
 } from 'lucide-react';
 import { detectAIContent, type DetectorResult, type SentenceAnalysis } from './gemini';
+import { extractTextFromFile, type ExtractedFileContent } from './fileParser';
 import toast from 'react-hot-toast';
 import styles from './Detector.module.css';
 
@@ -23,6 +24,35 @@ export default function Detector({ apiKey, initialText = '', onSendToHumanizer, 
   const [result, setResult] = useState<DetectorResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [selectedSentence, setSelectedSentence] = useState<SentenceAnalysis | null>(null);
+
+  // File upload state
+  const [uploadedFile, setUploadedFile] = useState<ExtractedFileContent | null>(null);
+  const [extractingFile, setExtractingFile] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setExtractingFile(true);
+    const toastId = toast.loading(`Parsing ${file.name}...`);
+    try {
+      const extracted = await extractTextFromFile(file, apiKey);
+      if (!extracted.text.trim()) {
+        toast.error('Could not extract readable text from this file.', { id: toastId });
+        return;
+      }
+      setUploadedFile(extracted);
+      setInput(extracted.text);
+      const wordCount = extracted.text.split(/\s+/).filter(Boolean).length;
+      toast.success(`Loaded ${file.name} (${wordCount} words)!`, { id: toastId });
+    } catch (err: any) {
+      toast.error(err?.message || 'File parsing failed.', { id: toastId });
+    } finally {
+      setExtractingFile(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   const handleDetect = async () => {
     const wordCount = input.trim().split(/\s+/).filter(Boolean).length;
@@ -55,6 +85,15 @@ export default function Detector({ apiKey, initialText = '', onSendToHumanizer, 
 
   return (
     <div className={styles.container}>
+      {/* Hidden file input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept="*/*"
+        onChange={handleFileUpload}
+        style={{ display: 'none' }}
+      />
+
       {/* Input Section */}
       <div className={styles.inputCard}>
         <div className={styles.header}>
@@ -66,19 +105,57 @@ export default function Detector({ apiKey, initialText = '', onSendToHumanizer, 
           </div>
 
           <div className={styles.exBtns}>
-            <button className={styles.exBtn} onClick={() => setInput(EXAMPLE_AI)}>
-              Load AI-Generated Sample
+            <button
+              type="button"
+              className={`${styles.exBtn} ${styles.uploadBtn}`}
+              onClick={() => fileInputRef.current?.click()}
+              disabled={extractingFile}
+              title="Upload document: PDF, Word DOCX, TXT, MD, RTF"
+            >
+              <Upload size={12} /> {extractingFile ? 'Extracting...' : 'Upload File (PDF/DOCX/TXT)'}
             </button>
-            <button className={`${styles.exBtn} ${styles.greenBtn}`} onClick={() => setInput(EXAMPLE_HUMAN)}>
+            <button
+              className={styles.exBtn}
+              onClick={() => {
+                setInput(EXAMPLE_AI);
+                setUploadedFile(null);
+              }}
+            >
+              Load AI Sample
+            </button>
+            <button
+              className={`${styles.exBtn} ${styles.greenBtn}`}
+              onClick={() => {
+                setInput(EXAMPLE_HUMAN);
+                setUploadedFile(null);
+              }}
+            >
               Load Human Sample
             </button>
           </div>
         </div>
 
+        {/* Uploaded File Chip */}
+        {uploadedFile && (
+          <div className={styles.fileChip}>
+            <span className={styles.fileName}>
+              📄 {uploadedFile.fileName} ({uploadedFile.fileSize} • {uploadedFile.fileType})
+            </span>
+            <button
+              type="button"
+              className={styles.chipRemove}
+              onClick={() => setUploadedFile(null)}
+              title="Clear file link"
+            >
+              <X size={13} />
+            </button>
+          </div>
+        )}
+
         <textarea
           className={styles.textarea}
           rows={9}
-          placeholder="Paste cover letter, article, LinkedIn bio, or resume bullet text to analyze with the Antigravity Forensic Engine..."
+          placeholder="Paste cover letter, article, LinkedIn bio, or resume bullet text — or click 'Upload File' to scan any document directly..."
           value={input}
           onChange={e => setInput(e.target.value)}
         />

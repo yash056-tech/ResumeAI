@@ -116,6 +116,20 @@
   opacity: 0.92; transform: translateY(-1px);
 }
 
+.engineSelectBtn {
+  display: flex; align-items: center; gap: 0.45rem;
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 99px;
+  color: var(--text); padding: 0.38rem 0.85rem; font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.engineSelectBtn:hover {
+  border-color: var(--accent); background: rgba(99, 120, 255, 0.1);
+  box-shadow: 0 0 12px rgba(99, 120, 255, 0.2);
+}
+.engineIcon { color: var(--accent); flex-shrink: 0; }
+.engineLabel { display: flex; align-items: center; gap: 0.3rem; }
+.engineChevron { color: var(--text-faint); margin-left: 0.1rem; }
+
 .keyBtn {
   display: flex; align-items: center; gap: 0.35rem;
   background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm);

@@ -1,5 +1,14 @@
 // Gemini API service — Deeply Trained Subsystems 1, 2, 3
 import { GoogleGenAI } from '@google/genai';
+import {
+  streamUnifiedAI,
+  getActiveProvider,
+  getActiveModel,
+  type AIProvider,
+  AI_PROVIDERS
+} from './aiEngine';
+
+export { AI_PROVIDERS, type AIProvider, getActiveProvider, getActiveModel };
 
 const PRIMARY_MODEL = 'gemini-3.5-flash-lite';
 const FALLBACK_MODELS = ['gemini-3.8-flash', 'gemini-3.1-flash-lite'];
@@ -8,49 +17,17 @@ function getClient(apiKey: string) {
   return new GoogleGenAI({ apiKey });
 }
 
-// Helper to stream with automatic model fallback
-async function streamWithFallback(
-  apiKey: string,
-  systemPrompt: string,
-  userPrompt: string,
-  temperature: number,
-  onChunk: (text: string) => void
-) {
-  const ai = getClient(apiKey);
-  const modelsToTry = [PRIMARY_MODEL, ...FALLBACK_MODELS];
-  let lastError: any = null;
-
-  for (const model of modelsToTry) {
-    try {
-      const response = await ai.models.generateContentStream({
-        model,
-        contents: userPrompt,
-        config: { systemInstruction: systemPrompt, temperature },
-      });
-
-      for await (const chunk of response) {
-        const text = chunk.text;
-        if (text) onChunk(text);
-      }
-      return; // Succeeded
-    } catch (err: any) {
-      console.warn(`Streaming with ${model} failed, attempting next fallback...`, err);
-      lastError = err;
-    }
-  }
-
-  throw lastError || new Error('All model attempts failed');
-}
-
 // ──────────────────────────────────────────────
 // SUBSYSTEM 1 — ATS Resume Builder (High-Performance Recruiter Architecture)
 // ──────────────────────────────────────────────
 export async function buildATSResume(
-  apiKey: string,
+  _apiKey: string,
   rawHistory: string,
   jobDescription: string,
   seniorityLevel: string,
-  onChunk: (text: string) => void
+  onChunk: (text: string) => void,
+  provider?: AIProvider,
+  model?: string
 ): Promise<void> {
   const systemPrompt = `You are a Principal Executive Resume Architect and Master Applicant Tracking System (ATS) Parser Specialist.
 Your objective: Transform raw applicant background and a target Job Description (JD) into an industry-leading, 99/100 ATS-Compliant, Recruiter-Preferred Resume calibrated for a ${seniorityLevel.toUpperCase()} professional.
@@ -121,18 +98,22 @@ ${jobDescription}
 
 Generate the complete, recruiter-ready, ATS-optimized resume now following all strict parsing constraints.`;
 
-  await streamWithFallback(apiKey, systemPrompt, userPrompt, 0.35, onChunk);
+  const activeProv = provider || getActiveProvider();
+  const activeMdl = model || getActiveModel(activeProv);
+  await streamUnifiedAI(activeProv, activeMdl, systemPrompt, userPrompt, 0.35, onChunk);
 }
 
 // ──────────────────────────────────────────────
 // SUBSYSTEM 2 — AI Humanizer (Deep Anti-Detection & Natural Cadence)
 // ──────────────────────────────────────────────
 export async function humanizeText(
-  apiKey: string,
+  _apiKey: string,
   inputText: string,
   tonePreset: string,
   intensity: 'light' | 'balanced' | 'deep',
-  onChunk: (text: string) => void
+  onChunk: (text: string) => void,
+  provider?: AIProvider,
+  model?: string
 ): Promise<void> {
   const intensityGuide = {
     light: 'Focus on removing obvious robotic buzzwords while keeping existing sentence boundaries mostly intact.',
@@ -187,7 +168,9 @@ NON-NEGOTIABLE HUMANIZING PRINCIPLES:
 
   const temp = intensity === 'deep' || tonePreset.includes('Stealth') ? 0.92 : intensity === 'balanced' ? 0.88 : 0.82;
 
-  await streamWithFallback(apiKey, systemPrompt, userPrompt, temp, onChunk);
+  const activeProv = provider || getActiveProvider();
+  const activeMdl = model || getActiveModel(activeProv);
+  await streamUnifiedAI(activeProv, activeMdl, systemPrompt, userPrompt, temp, onChunk);
 }
 
 // ──────────────────────────────────────────────

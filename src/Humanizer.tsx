@@ -1,10 +1,11 @@
 import { useState, useRef } from 'react';
 import {
   Wand2, Copy, RotateCcw, ArrowRight, ShieldCheck, Sparkles,
-  Sliders, Gauge, Send, AlertCircle, Upload, X, CheckCircle2, ScanSearch
+  Sliders, Gauge, Send, AlertCircle, Upload, X, CheckCircle2, ScanSearch, Cpu
 } from 'lucide-react';
 import { humanizeText } from './gemini';
 import { extractTextFromFile, type ExtractedFileContent } from './fileParser';
+import { AI_PROVIDERS, type AIProvider, getActiveProvider, setActiveProvider } from './aiEngine';
 import toast from 'react-hot-toast';
 import styles from './Humanizer.module.css';
 
@@ -36,6 +37,7 @@ export default function Humanizer({ apiKey, initialText = '', onSendToDetector, 
   const [output, setOutput] = useState('');
   const [selectedTone, setSelectedTone] = useState(TONES[0].id);
   const [intensity, setIntensity] = useState<'light' | 'balanced' | 'deep'>('balanced');
+  const [provider, setProvider] = useState<AIProvider>(() => getActiveProvider());
   const [loading, setLoading] = useState(false);
   const outputRef = useRef<HTMLDivElement>(null);
 
@@ -87,7 +89,7 @@ export default function Humanizer({ apiKey, initialText = '', onSendToDetector, 
       await humanizeText(apiKey, input, selectedTone, intensity, (chunk) => {
         setOutput(prev => prev + chunk);
         setTimeout(() => outputRef.current?.scrollTo({ top: outputRef.current.scrollHeight, behavior: 'smooth' }), 50);
-      });
+      }, provider);
       toast.success('Text humanized & AI tropes stripped!');
     } catch (err: any) {
       toast.error(err?.message ?? 'Humanization failed.');
@@ -109,7 +111,7 @@ export default function Humanizer({ apiKey, initialText = '', onSendToDetector, 
       await humanizeText(apiKey, currentOutput, 'Stealth Bypass (Anti-AI Detector)', 'deep', (chunk) => {
         setOutput(prev => prev + chunk);
         setTimeout(() => outputRef.current?.scrollTo({ top: outputRef.current.scrollHeight, behavior: 'smooth' }), 50);
-      });
+      }, provider);
       toast.success('Applied deep anti-AI polish (Max Burstiness & Entropy)!', { id: toastId });
     } catch (err: any) {
       toast.error(err?.message ?? 'Deep polish failed.', { id: toastId });
@@ -134,7 +136,7 @@ export default function Humanizer({ apiKey, initialText = '', onSendToDetector, 
       await humanizeText(apiKey, input, nextTone.id, intensity, (chunk) => {
         setOutput(prev => prev + chunk);
         setTimeout(() => outputRef.current?.scrollTo({ top: outputRef.current.scrollHeight, behavior: 'smooth' }), 50);
-      });
+      }, provider);
       toast.success(`Rewritten with ${nextTone.label}!`, { id: toastId });
     } catch (err: any) {
       toast.error(err?.message ?? 'Alternative voice generation failed.', { id: toastId });
@@ -152,6 +154,29 @@ export default function Humanizer({ apiKey, initialText = '', onSendToDetector, 
     <div className={styles.container}>
       {/* Configuration Header */}
       <div className={styles.configHeader}>
+        <div className={styles.engineGroup}>
+          <label><Cpu size={14} /> AI Engine:</label>
+          <div className={styles.enginePills}>
+            {(['gemini', 'groq', 'anthropic', 'openai'] as AIProvider[]).map(p => {
+              const meta = AI_PROVIDERS[p];
+              return (
+                <button
+                  key={p}
+                  className={`${styles.engineBtn} ${provider === p ? styles.activeEngine : ''}`}
+                  onClick={() => {
+                    setProvider(p);
+                    setActiveProvider(p);
+                    toast.success(`Switched AI Engine to ${meta.name}`);
+                  }}
+                  title={meta.description}
+                >
+                  <span>{meta.icon}</span> {meta.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <div className={styles.toneGroup}>
           <label><Sliders size={14} /> Tone Preset:</label>
           <div className={styles.tonePills}>

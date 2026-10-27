@@ -3,12 +3,13 @@ import { Toaster } from 'react-hot-toast';
 import {
   FileText, Wand2, ScanSearch, Key, Zap, CheckCircle2,
   Sparkles, LogOut, ChevronDown, Shield,
-  Globe, ArrowRight
+  Globe, ArrowRight, Cpu
 } from 'lucide-react';
 import { useApiKey } from './useApiKey';
 import { useAuth } from './useAuth';
 import AuthGate from './AuthGate';
-import ApiKeyModal from './ApiKeyModal';
+import MultiAiModal from './MultiAiModal';
+import { getActiveProvider, AI_PROVIDERS, type AIProvider } from './aiEngine';
 import ResumeBuilder from './ResumeBuilder';
 import Humanizer from './Humanizer';
 import Detector from './Detector';
@@ -47,7 +48,8 @@ const TABS = [
 ];
 
 export default function App() {
-  const { apiKey, setApiKey, hasKey } = useApiKey();
+  const { apiKey } = useApiKey();
+  const [activeProvider, setActiveProviderState] = useState<AIProvider>(() => getActiveProvider());
   const {
     user,
     isAuthenticated,
@@ -70,11 +72,6 @@ export default function App() {
   // Cross-subsystem transfer states
   const [humanizerInput, setHumanizerInput] = useState('');
   const [detectorInput, setDetectorInput] = useState('');
-
-  const handleKeySave = (key: string) => {
-    setApiKey(key);
-    setShowKeyModal(false);
-  };
 
   const handleSendToHumanizer = (text: string) => {
     setHumanizerInput(text);
@@ -150,9 +147,15 @@ export default function App() {
         />
       )}
 
-      {/* ── API Key Configuration Modal ── */}
+      {/* ── Multi-AI Engine Configuration Modal ── */}
       {showKeyModal && (
-        <ApiKeyModal onSave={handleKeySave} currentKey={apiKey} />
+        <MultiAiModal
+          isOpen={showKeyModal}
+          onClose={() => setShowKeyModal(false)}
+          onProviderChanged={(prov) => {
+            setActiveProviderState(prov);
+          }}
+        />
       )}
 
       {/* ── Modern Header ── */}
@@ -203,14 +206,17 @@ export default function App() {
 
           {/* Header Actions */}
           <div className={styles.headerActions}>
-            {/* API Key Status Button */}
+            {/* Multi-AI Engine Selector Button */}
             <button
-              className={styles.keyBtn}
+              className={styles.engineSelectBtn}
               onClick={() => setShowKeyModal(true)}
-              title="Gemini API Key Settings"
+              title="Configure Multi-AI Providers (Gemini, Groq, Claude, OpenAI, OpenRouter)"
             >
-              <Key size={14} />
-              {hasKey ? <span className={styles.keyDot} /> : <span>Key</span>}
+              <Cpu size={14} className={styles.engineIcon} />
+              <span className={styles.engineLabel}>
+                {AI_PROVIDERS[activeProvider]?.icon || '🔮'} {AI_PROVIDERS[activeProvider]?.name || 'Gemini'}
+              </span>
+              <ChevronDown size={12} className={styles.engineChevron} />
             </button>
 
             {/* Authenticated User Status OR Guest Sign In Button */}

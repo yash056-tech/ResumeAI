@@ -189,6 +189,30 @@
   font-size: 0.92rem; line-height: 1.75; color: var(--text);
 }
 
+.authenticityBar {
+  display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;
+  background: rgba(52, 211, 153, 0.08); border: 1px solid rgba(52, 211, 153, 0.25);
+  border-radius: var(--radius-sm); padding: 0.45rem 0.85rem;
+}
+.authBadgeItem {
+  display: flex; align-items: center; gap: 0.35rem; font-size: 0.76rem; color: var(--text-muted);
+}
+.authBadgeItem strong {
+  color: var(--accent3); font-weight: 700;
+}
+
+.verifyBridgeBtn {
+  display: flex; align-items: center; justify-content: center; gap: 0.45rem;
+  background: rgba(245, 158, 11, 0.12); color: var(--accent-yellow);
+  border: 1px dashed rgba(245, 158, 11, 0.4); border-radius: var(--radius-sm);
+  padding: 0.6rem 1rem; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+  transition: all 0.2s; margin-top: 0.2rem;
+}
+.verifyBridgeBtn:hover {
+  background: rgba(245, 158, 11, 0.22); border-color: var(--accent-yellow); color: #fff;
+  transform: translateY(-1px);
+}
+
 .streamDots {
   display: flex; gap: 0.4rem; justify-content: center; align-items: center; padding: 4rem;
 }

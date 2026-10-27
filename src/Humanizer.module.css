@@ -171,6 +171,16 @@
 .paneActions button:hover {
   border-color: var(--accent2); color: #fff;
 }
+.polishBtn {
+  background: rgba(167, 139, 250, 0.15) !important;
+  border-color: var(--accent2) !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+.polishBtn:hover:not(:disabled) {
+  background: var(--accent2) !important;
+  color: #000 !important;
+}
 
 .outputBox {
   background: var(--bg2); border: 1px solid var(--border);

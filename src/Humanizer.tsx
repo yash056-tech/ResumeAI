@@ -96,6 +96,29 @@ export default function Humanizer({ apiKey, initialText = '', onSendToDetector, 
     }
   };
 
+  const handleDeeperPolish = async () => {
+    if (!output.trim()) return;
+    if (onRequireAuth && !onRequireAuth(() => handleDeeperPolish(), 'Deep Anti-AI Polish')) {
+      return;
+    }
+    const currentOutput = output;
+    setOutput('');
+    setLoading(true);
+    const toastId = toast.loading('Running secondary deep entropy polish...');
+    try {
+      await humanizeText(apiKey, currentOutput, 'Stealth Bypass (Anti-AI Detector)', 'deep', (chunk) => {
+        setOutput(prev => prev + chunk);
+        setTimeout(() => outputRef.current?.scrollTo({ top: outputRef.current.scrollHeight, behavior: 'smooth' }), 50);
+      });
+      toast.success('Applied deep anti-AI polish (Max Burstiness & Entropy)!', { id: toastId });
+    } catch (err: any) {
+      toast.error(err?.message ?? 'Deep polish failed.', { id: toastId });
+      setOutput(currentOutput);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const copyOutput = () => {
     navigator.clipboard.writeText(output);
     toast.success('Copied humanized text!');
@@ -249,6 +272,14 @@ export default function Humanizer({ apiKey, initialText = '', onSendToDetector, 
             </div>
             {output && (
               <div className={styles.paneActions}>
+                <button
+                  onClick={handleDeeperPolish}
+                  title="Run secondary deep de-AI pass for maximum human entropy"
+                  disabled={loading}
+                  className={styles.polishBtn}
+                >
+                  <Wand2 size={13} /> Deeper Polish
+                </button>
                 <button onClick={copyOutput} title="Copy to clipboard">
                   <Copy size={13} /> Copy
                 </button>

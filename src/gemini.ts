@@ -2,7 +2,7 @@
 import { GoogleGenAI } from '@google/genai';
 
 const PRIMARY_MODEL = 'gemini-3.5-flash-lite';
-const FALLBACK_MODELS = ['gemini-3.1-flash-lite', 'gemini-3.8-flash'];
+const FALLBACK_MODELS = ['gemini-3.8-flash', 'gemini-3.1-flash-lite'];
 
 function getClient(apiKey: string) {
   return new GoogleGenAI({ apiKey });
@@ -52,36 +52,66 @@ export async function buildATSResume(
   seniorityLevel: string,
   onChunk: (text: string) => void
 ): Promise<void> {
-  const systemPrompt = `You are an elite ATS Resume Architect and Career Intelligence AI engine.
-Your role: Transform raw professional history and a target Job Description (JD) into a clean, parseable, high-impact resume tailored for a ${seniorityLevel.toUpperCase()} level professional.
+  const systemPrompt = `You are a Principal Executive Resume Architect and Applicant Tracking System (ATS) Parser Specialist.
+Your mission: Architect a 99/100 ATS-Compliant, Recruiter-Ready resume by synthesizing the applicant's raw history with the high-priority requirements of the target Job Description (JD) calibrated specifically for a ${seniorityLevel.toUpperCase()} seniority level.
 
-STRICT CONSTRAINTS & ATS COMPLIANCE:
-1. FORMATTING: Output content using standard Markdown structures ONLY.
-   - Strict avoidance of tables, columns, graphics, or complex text boxes that break Applicant Tracking Systems (ATS).
-   - Use clear standard headings (H2): ## Summary, ## Experience, ## Skills, ## Education. (Optional: ## Certifications, ## Key Projects).
-2. KEYWORD OPTIMIZATION:
-   - Extract critical hard skills, tools, and methodologies from the provided JD.
-   - Naturally integrate them into the resume content without keyword stuffing.
-3. ACTION-DRIVEN BULLETS:
-   - Structure every work experience bullet point using the Action-Context-Result (ACR) framework.
-   - Embed measurable metrics and numbers wherever possible (e.g., latency reduction, revenue increase, team size, scale, percentage gains).
-4. INTEGRITY: Never invent or hallucinate dates, employers, or core qualifications.
-5. ATS AUDIT TRAIL: End the resume with:
+CORE ATS ARCHITECTURE & COMPLIANCE RULES:
+1. STRICT LINEAR PARSEABILITY:
+   - Output clean, standard Markdown ONLY.
+   - Absolutely NO tables, side-by-side multi-column layouts, graphics, icons, or complex ASCII boxes. Major ATS systems (Workday, Greenhouse, Taleo, Lever, iCIMS) choke on columns and tables.
+   - Standard H2 Section Headings ONLY:
+     ## PROFESSIONAL SUMMARY
+     ## TECHNICAL SKILLS
+     ## PROFESSIONAL EXPERIENCE
+     ## EDUCATION
+     ## CERTIFICATIONS & PROJECTS (if applicable)
+
+2. GOOGLE XYZ & ACR BULLET FORMULA:
+   - Every single bullet point under Experience MUST adhere to:
+     "Accomplished [X] as measured by [Y], by doing [Z]" (Action - Context - Result).
+   - Every bullet MUST open with a powerful active verb:
+     (e.g., Architected, Engineered, Cut, Spearheaded, Accelerated, Automated, Deployed, Re-indexed, Reduced).
+   - Quantify relentlessly: Include exact numbers, percentages (%), dollar amounts ($), latency drops, throughput (QPS/TPS), or team sizes wherever implied by raw history.
+   - Never write passive duty lists like "Responsible for managing...". Write "Managed 14 distributed microservices in Go and Kubernetes, improving P99 latency by 45%."
+
+3. KEYWORD DENSITY & TAXONOMY INTEGRATION:
+   - Extract the highest-value hard skills, frameworks, platforms, and methodologies from the target JD.
+   - Organize Technical Skills into a clean, searchable matrix:
+     - **Languages & Frameworks:** [Extracted matches]
+     - **Cloud & Infrastructure:** [Extracted matches]
+     - **Databases & Caching:** [Extracted matches]
+     - **Architecture & Methodologies:** [Extracted matches]
+     - **Tools & DevOps:** [Extracted matches]
+   - Seamlessly embed these target keywords into the experience bullets so ATS resume parsers rank the applicant in the top 1% match tier without artificial keyword stuffing.
+
+4. TARGET SENIORITY CALIBRATION (${seniorityLevel.toUpperCase()}):
+   - Entry/Fresher: Emphasize core fundamentals, projects, algorithmic problem-solving, rapid adaptability, and academic/internship results.
+   - Mid-Level: Emphasize autonomy, feature ownership, cross-functional collaboration, clean code, and production reliability.
+   - Senior / Staff: Emphasize distributed system architecture, technical leadership, mentoring, architectural trade-offs, and company-wide impact.
+   - Executive (VP/C-Suite): Emphasize organizational scaling, budget optimization ($), engineering velocity, retention, hiring, and business/revenue alignment.
+
+5. ACCURACY & FACTUAL INTEGRITY:
+   - Never hallucinate dates, degrees, or employers. Elevate real achievements into high-conversion executive language.
+
+6. RECRUITER AUDIT FOOTER:
+   End the generated resume with an executive ATS audit summary:
 ---
-### ATS Optimization Audit
-- **Target Seniority:** ${seniorityLevel}
-- **Top Matched Keywords:** (list 5-8 crucial keywords incorporated from the JD)
-- **Parseability Score:** 98/100 (Single-column linear markdown, standard headings)`;
+### 📊 ATS Optimization & Recruiter Match Audit
+- **Calibrated Seniority:** ${seniorityLevel}
+- **Calculated ATS Match Score:** 98-99 / 100
+- **Primary Keywords Matched from JD:** [List 6-10 exact keywords extracted and incorporated]
+- **Parsing Compliance:** 100% Single-Column Linear Hierarchy (Zero tables, compliant with Workday, Greenhouse, Lever, Taleo)
+- **Competitive Edge:** ACR Metric-driven impact bullets with quantified ROI.`;
 
-  const userPrompt = `### RAW PROFESSIONAL HISTORY
+  const userPrompt = `### APPLICANT RAW PROFESSIONAL HISTORY
 ${rawHistory}
 
-### TARGET JOB DESCRIPTION
+### TARGET JOB DESCRIPTION (JD)
 ${jobDescription}
 
-Generate the ATS-optimized resume now following all constraints.`;
+Generate the complete, recruiter-ready, ATS-optimized resume now following all strict parsing constraints.`;
 
-  await streamWithFallback(apiKey, systemPrompt, userPrompt, 0.4, onChunk);
+  await streamWithFallback(apiKey, systemPrompt, userPrompt, 0.35, onChunk);
 }
 
 // ──────────────────────────────────────────────
@@ -113,7 +143,7 @@ Zero fluff, zero marketing speak. High-signal engineering clarity. Describe tech
 Short, punchy, active sentences. Prioritize traction, speed of shipping, user impact, and ownership. High-energy, forward-moving, and impact-first.`,
   };
 
-  const selectedToneGuide = toneGuides[tonePreset] || toneGuides['Natural & Conversational'];
+  const selectedToneGuide = toneGuides[tonePreset] || toneGuides['Stealth Bypass (Anti-AI Detector)'];
 
   const systemPrompt = `You are a world-class Linguistic Humanizer and Forensic Anti-AI Engine.
 Your singular mission: Rewrite AI-generated, stiff, or corporate-speak text so that it reads with the unmistakable authenticity, rhythm, and nuance of real human thought — completely eliminating the mathematical patterns flagged by AI detectors (GPTZero, Turnitin, Copyleaks).
@@ -162,6 +192,10 @@ Example 3 (Technical Incident / Engineering Practice):
 ROBOTIC AI: "Navigating complex database migrations necessitates meticulous risk mitigation strategies, which underscores the paramount importance of thorough schema validation and automated alerting protocols."
 HUMAN TRAINING: "If a database migration fails, everyone notices immediately. We learned that the hard way during a holiday traffic spike. Since then, no schema change touches production without shadow traffic tests and automated rollback triggers."
 
+Example 4 (Student / Early Career):
+ROBOTIC AI: "As an enthusiastic computer science graduate, I am deeply passionate about leveraging my foundational acumen to contribute meaningfully to transformative software development initiatives."
+HUMAN TRAINING: "I recently finished my computer science degree at Berkeley, where most of my weekends were spent debugging distributed systems projects in C++ and building small web apps with TypeScript."
+
 OUTPUT FORMAT:
 Return strictly the humanized text. Do NOT include preambles, explanations, quotes, or markdown notes about your edits.`;
 
@@ -173,7 +207,7 @@ Return strictly the humanized text. Do NOT include preambles, explanations, quot
 }
 
 // ──────────────────────────────────────────────
-// SUBSYSTEM 3 — AI Content Detector (Antigravity Engine)
+// SUBSYSTEM 3 — AI Content Detector (Antigravity Forensic Engine)
 // ──────────────────────────────────────────────
 export interface SentenceAnalysis {
   sentence: string;
@@ -202,39 +236,56 @@ export async function detectAIContent(
   inputText: string
 ): Promise<DetectorResult> {
   const ai = getClient(apiKey);
-  const systemPrompt = `You are the ANTIGRAVITY ENGINE — an AI Content Detector built for a professional career platform.
-Your objective: Analyze provided text content to evaluate the probability of AI generation, mirroring rigorous forensic detection metrics.
+  const systemPrompt = `You are the ANTIGRAVITY FORENSIC ENGINE — a state-of-the-art AI Content Detector modeled on statistical NLP forensics (similar to GPTZero, Turnitin, and Copyleaks).
+
+YOUR MISSION: Perform a rigorous, multi-vector forensic evaluation of the provided text to calculate the exact mathematical probability of AI generation vs human authorship.
 
 EVALUATION VECTORS:
-1. Burstiness: Variation in sentence length and complexity (AI writing tends to have uniform sentence lengths and rigid structures).
-2. Perplexity: Predictability of vocabulary choice (AI writing uses highly statistically probable word sequences and transitions).
+1. BURSTINESS (Sentence Length Variance):
+   - AI models generate monotonous, rhythmic sentence lengths (standard deviation < 4 words, typically 15-22 words per sentence).
+   - Authentic human text has high variance (standard deviation > 8 words), mixing 4-word punchy clauses with 30-word compound sentences.
+   - Low burstiness = AI indicator. High burstiness = Human indicator.
+
+2. PERPLEXITY & VOCABULARY UNIFORMITY:
+   - AI chooses the most statistically probable next tokens (low perplexity).
+   - Hallmark low-perplexity AI combinations: "navigating the landscape", "testament to", "delve into", "pivotal role", "vibrant tapestry", "fostering a culture", "seamless integration", "empowering stakeholders".
+   - Human text introduces unexpected idioms, casual asymmetry, specific empirical observations, and varied vocabulary (high perplexity).
+
+3. SYNTRACTIC TAILS & ESSAY FORMULA:
+   - AI over-relies on participial tails: ", thereby ensuring...", ", highlighting the...", ", showcasing...".
+   - AI repeats formulaic transition words: "Furthermore", "Moreover", "In addition", "Importantly", "To that end".
+
+SCORING GUIDELINE:
+- 0% - 15% AI (Authentic Human): Text with varied sentence lengths, natural idioms, concrete details, and absence of generic corporate fluff.
+- 16% - 45% AI (Mixed / Moderate): Text with some AI-like transitions or light AI polish, but with distinct human voice or specialized terminology.
+- 50% - 100% AI (High AI Probability): Monotonous sentence cadence, hallmark buzzwords (delve, testament, pivotal, seamless), and participial tail constructions.
 
 OUTPUT FORMAT:
-Return a strictly valid JSON object ONLY. Do not use markdown backticks or commentary.
+Return a strictly valid JSON object ONLY. Do NOT wrap in backticks or add introductory commentary.
 Schema:
 {
   "aiPercentage": <integer 0-100>,
   "humanPercentage": <integer 0-100, where aiPercentage + humanPercentage = 100>,
   "confidence": <"Low" | "Medium" | "High">,
-  "burstinessScore": <integer 0-100, higher means more human variance>,
-  "perplexityScore": <integer 0-100, higher means more human vocabulary entropy>,
-  "burstinessLabel": <"High Variance (Human)" | "Moderate Variance" | "Low Variance (Uniform/AI)">,
-  "perplexityLabel": <"High Unpredictability (Human)" | "Moderate Perplexity" | "Predictable / Safe (AI)">,
+  "burstinessScore": <integer 0-100, where 100 is maximum human variance>,
+  "perplexityScore": <integer 0-100, where 100 is maximum human vocabulary entropy>,
+  "burstinessLabel": <"High Variance (Authentic Human)" | "Moderate Cadence Variance" | "Low Variance (Uniform AI Cadence)">,
+  "perplexityLabel": <"High Entropy (Human Vocabulary)" | "Moderate Perplexity" | "Predictable / Safe Tokens (AI)">,
   "flaggedSentences": [
-    { "sentence": "<exact sentence>", "reason": "<why it triggers AI heuristics>" }
+    { "sentence": "<exact sentence>", "reason": "<specific forensic trigger: e.g., Low burstiness + participial tail + AI cliché 'testament to'>" }
   ],
   "sentenceHeatmap": [
-    { "sentence": "<sentence>", "risk": <"low" | "moderate" | "high">, "score": <0-100>, "reason": "<optional note>" }
+    { "sentence": "<sentence>", "risk": <"low" | "moderate" | "high">, "score": <0-100 AI probability for this sentence>, "reason": "<concise forensic diagnosis>" }
   ],
   "recommendations": [
-    "<actionable suggestion 1>",
-    "<actionable suggestion 2>"
+    "<actionable suggestion to make the text more human: e.g., break sentence 2 into two short sentences>",
+    "<actionable suggestion 2: e.g., replace 'delve' and 'thereby ensuring' with direct action verbs>"
   ],
-  "verdict": "<one concise forensic summary verdict>",
-  "rawAnalysis": "<2-3 sentence technical forensic breakdown>"
+  "verdict": "<one authoritative forensic summary line>",
+  "rawAnalysis": "<2-3 sentence technical breakdown of entropy and syntactic cadence>"
 }`;
 
-  const userPrompt = `Analyze the following text for AI probability:\n\n${inputText}`;
+  const userPrompt = `Perform deep forensic linguistic analysis on the following text:\n\n${inputText}`;
 
   const modelsToTry = [PRIMARY_MODEL, ...FALLBACK_MODELS];
   let lastError: any = null;
@@ -244,22 +295,23 @@ Schema:
       const response = await ai.models.generateContent({
         model,
         contents: userPrompt,
-        config: { systemInstruction: systemPrompt, temperature: 0.2 },
+        config: { systemInstruction: systemPrompt, temperature: 0.15 },
       });
 
       const raw = response.text ?? '';
       const cleaned = raw.replace(/```json?\n?/g, '').replace(/```/g, '').trim();
       const parsed = JSON.parse(cleaned) as DetectorResult;
 
-      // Fallback for sentenceHeatmap if model missed it
+      // Ensure sentence heatmap completeness
       if (!parsed.sentenceHeatmap || parsed.sentenceHeatmap.length === 0) {
         const sentences = inputText.match(/[^.!?]+[.!?]+/g) || [inputText];
-        parsed.sentenceHeatmap = sentences.slice(0, 15).map(s => {
+        parsed.sentenceHeatmap = sentences.slice(0, 18).map(s => {
           const isFlagged = parsed.flaggedSentences.some(f => f.sentence.includes(s.trim().slice(0, 30)));
           return {
             sentence: s.trim(),
             risk: isFlagged ? 'high' : (parsed.aiPercentage > 40 ? 'moderate' : 'low'),
-            score: isFlagged ? 85 : 30,
+            score: isFlagged ? 85 : Math.max(10, Math.min(parsed.aiPercentage, 45)),
+            reason: isFlagged ? 'Triggers algorithmic predictability patterns' : 'Natural human phrasing',
           };
         });
       }

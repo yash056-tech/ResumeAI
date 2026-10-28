@@ -101,6 +101,19 @@ export default function AuthGate({
       return;
     }
     onLogin(signInEmail);
+
+    // Notify admin on client login as well
+    notifyAdminOnRegistration({
+      name: signInEmail.split('@')[0],
+      email: signInEmail,
+      persona: 'Returning Client / Candidate',
+      country: pricing.country,
+      tier: '100% Free Lifetime All-Access',
+      currency: pricing.currency,
+      price: 'FREE ($0 / ₹0)',
+      paymentMethod: 'Account Sign In (Free)',
+    });
+
     toast.success('Signed in successfully! Full access unlocked.');
     if (onClose) onClose();
   };
@@ -133,7 +146,7 @@ export default function AuthGate({
           </div>
           <h2>ResumeAI <span className={styles.proTag}>100% FREE ACCESS</span></h2>
           <p className={styles.tagline}>
-            ATS Resume Studio · Enterprise AI Humanizer · Forensic Content Detector
+            Free ATS-Friendly Resume Studio · Unrejectable Ivy League & Silicon Valley Templates
           </p>
 
           {/* Action Context Alert if triggered by clicking a button */}

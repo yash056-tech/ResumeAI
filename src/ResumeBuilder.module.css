@@ -197,12 +197,48 @@
 .emptyPrompt p { font-size: 0.85rem; color: var(--text-muted); max-width: 420px; line-height: 1.5; }
 
 /* Templates */
-.tpl-modern .styledDoc h1,
-.tpl-modern .styledDoc h2 {
-  font-family: 'Inter', sans-serif; letter-spacing: -0.02em;
+.tpl-harvard .styledDoc h1 {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #fff;
+  margin-bottom: 0.3rem;
 }
-.tpl-modern .styledDoc h2 {
-  color: var(--accent2); border-bottom: 1.5px solid rgba(167, 139, 250, 0.25); padding-bottom: 0.2rem;
+.tpl-harvard .styledDoc p:first-of-type {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 0.6rem;
+  margin-bottom: 1rem;
+}
+.tpl-harvard .styledDoc h2 {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 0.25rem;
+  margin-top: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.tpl-silicon .styledDoc h1,
+.tpl-silicon .styledDoc h2 {
+  font-family: 'Inter', -apple-system, sans-serif;
+  letter-spacing: -0.02em;
+}
+.tpl-silicon .styledDoc h2 {
+  color: var(--accent);
+  border-bottom: 2px solid rgba(99, 120, 255, 0.35);
+  padding-bottom: 0.25rem;
+  text-transform: uppercase;
+  font-size: 0.95rem;
 }
 
 .tpl-executive .styledDoc h1,
@@ -210,7 +246,11 @@
   font-family: 'Georgia', 'Times New Roman', serif;
 }
 .tpl-executive .styledDoc h2 {
-  color: #fff; border-bottom: 1px solid rgba(255, 255, 255, 0.25); text-transform: uppercase; font-size: 1.05rem; letter-spacing: 0.05em;
+  color: var(--accent2);
+  border-bottom: 1.5px solid rgba(167, 139, 250, 0.35);
+  text-transform: uppercase;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
 }
 
 .tpl-minimal .styledDoc {
@@ -218,7 +258,10 @@
 }
 .tpl-minimal .styledDoc h1,
 .tpl-minimal .styledDoc h2 {
-  color: #fff; border-bottom: 1px solid var(--border);
+  color: #fff;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.92rem;
+  text-transform: uppercase;
 }
 
 /* Bridge Card */
@@ -380,6 +423,22 @@
   background: rgba(52, 211, 153, 0.15); border: 1px solid rgba(52, 211, 153, 0.35);
   color: var(--accent3); font-size: 0.72rem; font-weight: 700;
   padding: 0.15rem 0.5rem; border-radius: 99px;
+}
+.unrejectablePill {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.45);
+  color: #fbbf24; font-size: 0.64rem; font-weight: 800;
+  padding: 0.15rem 0.5rem; border-radius: 99px; letter-spacing: 0.03em;
+  width: fit-content;
+}
+.tplWhy {
+  font-size: 0.72rem; color: var(--text-muted); line-height: 1.4;
+  background: rgba(52, 211, 153, 0.06); border-left: 2px solid var(--accent3);
+  padding: 0.35rem 0.55rem; border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.tplWhy strong { color: var(--accent3); }
+.bridgeDesc {
+  font-size: 0.76rem; color: var(--text-muted); margin: 0; line-height: 1.45;
 }
 
 .tplTitle {

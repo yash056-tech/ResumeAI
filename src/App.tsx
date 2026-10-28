@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import {
-  FileText, Wand2, ScanSearch, Key, Zap, CheckCircle2,
+  FileText, Key, Zap, CheckCircle2,
   Sparkles, LogOut, ChevronDown, Shield,
-  Globe, ArrowRight, Cpu
+  Globe, ArrowRight, Cpu, BookOpen
 } from 'lucide-react';
 import { useApiKey } from './useApiKey';
 import { useAuth } from './useAuth';
@@ -11,41 +11,7 @@ import AuthGate from './AuthGate';
 import MultiAiModal from './MultiAiModal';
 import { getActiveProvider, AI_PROVIDERS, type AIProvider } from './aiEngine';
 import ResumeBuilder from './ResumeBuilder';
-import Humanizer from './Humanizer';
-import Detector from './Detector';
 import styles from './App.module.css';
-
-type Tab = 'resume' | 'humanizer' | 'detector';
-
-const TABS = [
-  {
-    id: 'resume' as Tab,
-    icon: FileText,
-    label: 'ATS Resume Studio',
-    badge: 'Subsystem 1',
-    color: '#6378ff',
-    desc: 'Transform raw career history into a keyword-optimized, parseable, ACR-structured resume tailored to your target JD.',
-    highlight: '98.4% ATS Compatibility',
-  },
-  {
-    id: 'humanizer' as Tab,
-    icon: Wand2,
-    label: 'Enterprise AI Humanizer',
-    badge: 'Subsystem 2',
-    color: '#a78bfa',
-    desc: 'Strip robotic phrasing, vary sentence rhythm, and restore authentic human voice while preserving technical metrics.',
-    highlight: 'Zero AI Hallucination',
-  },
-  {
-    id: 'detector' as Tab,
-    icon: ScanSearch,
-    label: 'AI Content Detector',
-    badge: 'Subsystem 3',
-    color: '#f59e0b',
-    desc: 'Antigravity forensic detection engine scoring burstiness, perplexity, and linguistic heuristics in any text.',
-    highlight: 'Sentence-by-Sentence Audit',
-  },
-];
 
 export default function App() {
   const { apiKey } = useApiKey();
@@ -60,33 +26,19 @@ export default function App() {
     addSavedResume,
   } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<Tab>('resume');
   const [showKeyModal, setShowKeyModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [templatesTrigger, setTemplatesTrigger] = useState(0);
 
   // Auth Modal State (Pop-up triggered when visitor clicks an action or clicks Sign In/Register)
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authActionMessage, setAuthActionMessage] = useState<string | undefined>(undefined);
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
 
-  // Cross-subsystem transfer states
-  const [humanizerInput, setHumanizerInput] = useState('');
-  const [detectorInput, setDetectorInput] = useState('');
-
-  const handleSendToHumanizer = (text: string) => {
-    setHumanizerInput(text);
-    setActiveTab('humanizer');
-  };
-
-  const handleSendToDetector = (text: string) => {
-    setDetectorInput(text);
-    setActiveTab('detector');
-  };
-
   /**
    * Protected Action Gate:
    * Allows visitors to look, browse, type, and experiment freely.
-   * Prompts the registration pop-up ONLY when clicking final generate / save / analyze actions.
+   * Prompts the registration pop-up ONLY when clicking final generate / save actions.
    */
   const requireAuth = (callback: () => void, actionName?: string): boolean => {
     if (!isAuthenticated || !user) {
@@ -107,8 +59,9 @@ export default function App() {
     }
   };
 
-  const activeTabInfo = TABS.find(t => t.id === activeTab)!;
-  const ActiveIcon = activeTabInfo.icon;
+  const handleOpenTemplates = () => {
+    setTemplatesTrigger(prev => prev + 1);
+  };
 
   return (
     <div className={styles.app}>
@@ -162,7 +115,7 @@ export default function App() {
       <header className={styles.header}>
         <div className={styles.headerInner}>
           {/* Brand Logo with Custom Emblem & Name */}
-          <div className={styles.logo} onClick={() => setActiveTab('resume')} style={{ cursor: 'pointer' }}>
+          <div className={styles.logo} style={{ cursor: 'pointer' }}>
             <div className={styles.logoIcon}>
               <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M16 2L3 8.5V17C3 24.2 8.6 30.8 16 32C23.4 30.8 29 24.2 29 17V8.5L16 2Z" fill="url(#tf-logo-grad)" opacity="0.95" />
@@ -182,35 +135,27 @@ export default function App() {
                 <span className={styles.logoName}>ResumeAI</span>
                 <span className={styles.proTag}>100% FREE</span>
               </div>
-              <div className={styles.logoSub}>ATS Resume Studio · AI Humanizer · Content Detector</div>
+              <div className={styles.logoSub}>Free ATS-Friendly Resume Builder · Unrejectable Templates</div>
             </div>
           </div>
 
-          {/* Navigation Tabs (Strictly 3 Core Subsystems) */}
-          <nav className={styles.nav}>
-            {TABS.map(tab => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  className={`${styles.navBtn} ${activeTab === tab.id ? styles.navActive : ''}`}
-                  onClick={() => setActiveTab(tab.id)}
-                  style={{ '--tab-color': tab.color } as React.CSSProperties}
-                >
-                  <Icon size={15} />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* Header Actions */}
+          {/* Quick Header Navigation for Templates & Engine */}
           <div className={styles.headerActions}>
+            {/* Direct Templates Gallery Trigger */}
+            <button
+              className={styles.templateHeaderBtn}
+              onClick={handleOpenTemplates}
+              title="Open Battle-Tested & Unrejectable ATS Templates (Harvard, Silicon Valley, Goldman Sachs)"
+            >
+              <BookOpen size={14} />
+              <span>🏆 Unrejectable Templates (12)</span>
+            </button>
+
             {/* Multi-AI Engine Selector Button */}
             <button
               className={styles.engineSelectBtn}
               onClick={() => setShowKeyModal(true)}
-              title="Configure Multi-AI Providers (Gemini, Groq, Claude, OpenAI, OpenRouter)"
+              title="Configure AI Engine (Claude 3.5, OpenAI GPT-4o, Groq Llama 3.3, Gemini)"
             >
               <Cpu size={14} className={styles.engineIcon} />
               <span className={styles.engineLabel}>
@@ -222,13 +167,11 @@ export default function App() {
             {/* Authenticated User Status OR Guest Sign In Button */}
             {isAuthenticated && user ? (
               <>
-                {/* 100% Free Lifetime Access Badge */}
                 <div className={styles.freeBadge}>
                   <Sparkles size={13} className={styles.freeBadgeIcon} />
                   <span>Free Full Access</span>
                 </div>
 
-                {/* User Profile Hub */}
                 <div className={styles.userProfileWrap}>
                   <button
                     className={styles.avatarBtn}
@@ -254,7 +197,7 @@ export default function App() {
 
                       <div className={styles.userDropdownLinks}>
                         <button onClick={() => { setShowKeyModal(true); setShowUserMenu(false); }}>
-                          <Key size={14} /> Gemini API Key
+                          <Key size={14} /> AI Settings & Keys
                         </button>
                         <button className={styles.logoutBtn} onClick={() => { logout(); setShowUserMenu(false); }}>
                           <LogOut size={14} /> Sign Out (Switch User)
@@ -265,7 +208,6 @@ export default function App() {
                 </div>
               </>
             ) : (
-              /* Free Guest CTA to Sign In or Register */
               <button
                 className={styles.signInBtn}
                 onClick={() => {
@@ -281,14 +223,16 @@ export default function App() {
         </div>
       </header>
 
-      {/* ── Subsystem Hero Banner ── */}
-      <div className={styles.heroBanner} style={{ '--tab-color': activeTabInfo.color } as React.CSSProperties}>
+      {/* ── ATS Resume Studio Hero Banner ── */}
+      <div className={styles.heroBanner}>
         <div className={styles.heroBannerInner}>
           <div className={styles.heroBadge}>
-            <ActiveIcon size={13} /> {activeTabInfo.badge} · {activeTabInfo.highlight}
+            <FileText size={13} /> 100% Free · ACR Metrics Standard · Zero Paywall
           </div>
-          <h1 className={styles.heroTitle}>{activeTabInfo.label}</h1>
-          <p className={styles.heroDesc}>{activeTabInfo.desc}</p>
+          <h1 className={styles.heroTitle}>Free ATS-Friendly Resume Studio</h1>
+          <p className={styles.heroDesc}>
+            Build battle-tested, unrejectable resumes guaranteed to pass Workday, Taleo, Greenhouse, and Lever ATS screeners with 99%+ parse rates. Tailor your background to any target job description or load proven Ivy League & Silicon Valley templates with 1 click.
+          </p>
 
           {/* Feature pills row */}
           <div className={styles.heroPillsRow}>
@@ -298,10 +242,14 @@ export default function App() {
             </div>
             <div className={styles.heroPillItem}>
               <Shield size={12} style={{ color: 'var(--accent3)' }} />
-              <span>ATS Compliance: <strong>ACR Metrics Standard</strong></span>
+              <span>ATS Standard: <strong>ACR Metrics Standard (99%+ Pass)</strong></span>
             </div>
             <div className={styles.heroPillItem}>
-              <Globe size={12} style={{ color: 'var(--accent2)' }} />
+              <BookOpen size={12} style={{ color: 'var(--accent2)' }} />
+              <span>Templates: <strong>12 Unrejectable Formats</strong></span>
+            </div>
+            <div className={styles.heroPillItem}>
+              <Globe size={12} style={{ color: 'var(--accent-cyan)' }} />
               <span>Global Support: <strong>All Countries Supported</strong></span>
             </div>
           </div>
@@ -309,24 +257,7 @@ export default function App() {
         <div className={styles.heroBg} />
       </div>
 
-      {/* ── Mobile Horizontal Scroll Tabs ── */}
-      <div className={styles.mobileTabs}>
-        {TABS.map(tab => {
-          const Icon = tab.icon;
-          return (
-            <button
-              key={tab.id}
-              className={`${styles.mobilePill} ${activeTab === tab.id ? styles.mobilePillActive : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              style={{ '--tab-color': tab.color } as React.CSSProperties}
-            >
-              <Icon size={14} /> {tab.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* ── Main Application Workspace ── */}
+      {/* ── Main Application Workspace (Exclusively ATS Resume Builder) ── */}
       <main className={styles.main}>
         {/* Active Session Notification */}
         {isAuthenticated && user ? (
@@ -343,7 +274,7 @@ export default function App() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
               <Sparkles size={16} style={{ color: 'var(--accent2)' }} />
               <span>
-                <strong>Interactive Preview Mode:</strong> All services are 100% free. Explore the three subsystems below, type details, or test templates — you will be prompted to create your free account only upon clicking <strong>Generate</strong>.
+                <strong>Interactive Preview Mode:</strong> All services are 100% free. Explore the unrejectable templates, type details, or parse documents — you will be prompted to create your free account only upon clicking <strong>Generate</strong>.
               </span>
             </div>
             <button
@@ -359,36 +290,14 @@ export default function App() {
         )}
 
         <div className={styles.contentCard}>
-          {activeTab === 'resume' && (
-            <ResumeBuilder
-              apiKey={apiKey}
-              onSaveResume={(title, role, markdown, score) =>
-                addSavedResume({ title, targetRole: role, markdown, atsScore: score })
-              }
-              onSendToHumanizer={handleSendToHumanizer}
-              onRequireAuth={requireAuth}
-            />
-          )}
-
-          {activeTab === 'humanizer' && (
-            <Humanizer
-              apiKey={apiKey}
-              initialText={humanizerInput}
-              onSendToDetector={handleSendToDetector}
-              onRequireAuth={requireAuth}
-              onOpenAiConfig={() => setShowKeyModal(true)}
-              onProviderChange={(prov) => setActiveProviderState(prov)}
-            />
-          )}
-
-          {activeTab === 'detector' && (
-            <Detector
-              apiKey={apiKey}
-              initialText={detectorInput}
-              onSendToHumanizer={handleSendToHumanizer}
-              onRequireAuth={requireAuth}
-            />
-          )}
+          <ResumeBuilder
+            apiKey={apiKey}
+            onSaveResume={(title, role, markdown, score) =>
+              addSavedResume({ title, targetRole: role, markdown, atsScore: score })
+            }
+            onRequireAuth={requireAuth}
+            openTemplatesTrigger={templatesTrigger}
+          />
         </div>
       </main>
 
@@ -396,12 +305,14 @@ export default function App() {
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
           <div className={styles.footerLeft}>
-            <span>Built with <Zap size={12} style={{ color: 'var(--accent2)', verticalAlign: 'middle' }} /> Gemini API · <strong>ResumeAI Platform</strong></span>
-            <span className={styles.footerModel}>gemini-3.5-flash-lite</span>
+            <span>Built with <Zap size={12} style={{ color: 'var(--accent2)', verticalAlign: 'middle' }} /> AI Engine · <strong>ResumeAI Platform</strong></span>
+            <span className={styles.footerModel}>100% Free ATS Resume Studio</span>
           </div>
 
           <div className={styles.footerLinks}>
-            <button onClick={() => setShowKeyModal(true)}>API Gateway</button>
+            <button onClick={handleOpenTemplates}>Unrejectable Templates</button>
+            <span>•</span>
+            <button onClick={() => setShowKeyModal(true)}>AI Settings</button>
             <span>•</span>
             {isAuthenticated ? (
               <button onClick={logout}>Sign Out</button>

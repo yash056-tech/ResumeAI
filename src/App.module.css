@@ -116,6 +116,20 @@
   opacity: 0.92; transform: translateY(-1px);
 }
 
+.templateHeaderBtn {
+  display: flex; align-items: center; gap: 0.45rem;
+  background: linear-gradient(135deg, rgba(99, 120, 255, 0.22) 0%, rgba(167, 139, 250, 0.22) 100%);
+  border: 1px solid var(--accent); border-radius: 99px;
+  color: #fff; padding: 0.38rem 0.95rem; font-size: 0.8rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+  box-shadow: 0 0 14px rgba(99, 120, 255, 0.25);
+}
+.templateHeaderBtn:hover {
+  background: linear-gradient(135deg, rgba(99, 120, 255, 0.38) 0%, rgba(167, 139, 250, 0.38) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 0 18px rgba(99, 120, 255, 0.4);
+}
+
 .engineSelectBtn {
   display: flex; align-items: center; gap: 0.45rem;
   background: var(--bg3); border: 1px solid var(--border); border-radius: 99px;

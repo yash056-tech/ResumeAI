@@ -83,8 +83,20 @@
 
 .provIcon { font-size: 1.2rem; }
 .provText { display: flex; flex-direction: column; gap: 0.15rem; flex: 1; }
-.provNameRow { display: flex; align-items: center; gap: 0.35rem; }
+.provNameRow { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
 .provName { font-size: 0.82rem; font-weight: 700; color: #fff; }
+.recBadgePill {
+  font-size: 0.58rem; font-weight: 800; color: #fbbf24;
+  background: rgba(251, 191, 36, 0.16); border: 1px solid rgba(251, 191, 36, 0.4);
+  padding: 0.05rem 0.35rem; border-radius: 99px; letter-spacing: 0.03em;
+  display: inline-flex; align-items: center; gap: 0.2rem;
+}
+.recHeroBadge {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  background: rgba(251, 191, 36, 0.14); border: 1px solid rgba(251, 191, 36, 0.4);
+  color: #fbbf24; font-size: 0.7rem; font-weight: 700;
+  padding: 0.15rem 0.55rem; border-radius: 99px;
+}
 .activePill {
   font-size: 0.6rem; font-weight: 800; color: var(--accent3);
   background: rgba(52, 211, 153, 0.15); border: 1px solid rgba(52, 211, 153, 0.3);

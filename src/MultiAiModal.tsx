@@ -133,6 +133,7 @@ export default function MultiAiModal({ isOpen, onClose, onProviderChanged }: Pro
                   <div className={styles.provText}>
                     <div className={styles.provNameRow}>
                       <span className={styles.provName}>{prov.name}</span>
+                      {prov.recommended && <span className={styles.recBadgePill}>⭐ RECOMMENDED</span>}
                       {isActive && <span className={styles.activePill}>ACTIVE</span>}
                     </div>
                     <span className={styles.provBadge}>{prov.badge}</span>
@@ -153,7 +154,12 @@ export default function MultiAiModal({ isOpen, onClose, onProviderChanged }: Pro
               <div className={styles.provHeader}>
                 <span className={styles.largeIcon}>{currentMeta.icon}</span>
                 <div>
-                  <h3 className={styles.paneTitle}>{currentMeta.name}</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <h3 className={styles.paneTitle}>{currentMeta.name}</h3>
+                    {currentMeta.recommended && (
+                      <span className={styles.recHeroBadge}>⭐ Highly Recommended Engine</span>
+                    )}
+                  </div>
                   <p className={styles.paneDesc}>{currentMeta.description}</p>
                 </div>
               </div>

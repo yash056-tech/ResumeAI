@@ -376,6 +376,8 @@ export default function App() {
               initialText={humanizerInput}
               onSendToDetector={handleSendToDetector}
               onRequireAuth={requireAuth}
+              onOpenAiConfig={() => setShowKeyModal(true)}
+              onProviderChange={(prov) => setActiveProviderState(prov)}
             />
           )}
 

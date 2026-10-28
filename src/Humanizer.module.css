@@ -35,6 +35,258 @@
   color: #fff; box-shadow: 0 0 12px rgba(167, 139, 250, 0.25);
 }
 
+/* Recommended Engines (Claude & OpenAI) */
+.recommendedBtn {
+  border-color: rgba(251, 191, 36, 0.35);
+  background: rgba(251, 191, 36, 0.05);
+}
+.recommendedBtn:hover {
+  border-color: #fbbf24 !important;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.2);
+}
+.recommendedBtn.activeEngine {
+  background: rgba(251, 191, 36, 0.16) !important;
+  border-color: #fbbf24 !important;
+  color: #fff !important;
+  box-shadow: 0 0 16px rgba(251, 191, 36, 0.35) !important;
+}
+.recBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  background: rgba(251, 191, 36, 0.18);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  color: #fbbf24;
+  font-size: 0.64rem;
+  font-weight: 800;
+  padding: 0.1rem 0.42rem;
+  border-radius: 99px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-left: 0.25rem;
+}
+
+/* Others Dropdown */
+.othersWrapper {
+  position: relative;
+  display: inline-flex;
+}
+.othersBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.chevron {
+  transition: transform 0.2s ease;
+}
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.othersDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 1000;
+  width: 440px;
+  max-width: 90vw;
+  background: var(--bg2);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7), 0 0 30px rgba(99, 120, 255, 0.16);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  animation: dropdownFade 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropdownFade {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .othersDropdown {
+    width: 320px;
+    left: auto;
+    right: 0;
+  }
+}
+
+.dropdownHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.dropdownTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.dropdownSubtitle {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.othersList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.otherCard {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.otherCard:hover {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.03);
+}
+.otherCardActive {
+  background: rgba(99, 120, 255, 0.12) !important;
+  border-color: var(--accent) !important;
+}
+
+.otherCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.otherInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  flex: 1;
+}
+
+.otherIcon {
+  font-size: 1.25rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.otherNameRow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.otherName {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.otherBadge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--accent2);
+  background: rgba(167, 139, 250, 0.12);
+  border: 1px solid rgba(167, 139, 250, 0.28);
+  padding: 0.05rem 0.4rem;
+  border-radius: 99px;
+}
+
+.otherDesc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin: 0.15rem 0 0;
+  line-height: 1.35;
+}
+
+.otherRadio {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.activeCheck {
+  color: var(--accent3);
+}
+.radioCircle {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--border-hover);
+}
+
+.otherModelsRow {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  padding-top: 0.35rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.otherModelChip {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.otherModelChip:hover {
+  border-color: var(--accent2);
+  color: #fff;
+}
+.otherModelChipActive {
+  background: rgba(52, 211, 153, 0.15);
+  border-color: var(--accent3);
+  color: var(--accent3);
+  font-weight: 700;
+}
+
+.dropdownFooter {
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--border);
+}
+
+.openConfigBtn {
+  width: 100%;
+  background: rgba(99, 120, 255, 0.12);
+  border: 1px solid rgba(99, 120, 255, 0.3);
+  border-radius: var(--radius-sm);
+  color: #fff;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.openConfigBtn:hover {
+  background: rgba(99, 120, 255, 0.22);
+  border-color: var(--accent);
+}
+
 /* Workspace */
 .workspaceGrid {
   display: grid; grid-template-columns: 1fr auto 1fr; gap: 1.2rem; align-items: stretch;

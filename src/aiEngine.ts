@@ -21,6 +21,7 @@ export interface AIProviderMeta {
   defaultModel: string;
   placeholder: string;
   keyUrl: string;
+  recommended?: boolean;
 }
 
 export const AI_PROVIDERS: Record<AIProvider, AIProviderMeta> = {
@@ -61,6 +62,7 @@ export const AI_PROVIDERS: Record<AIProvider, AIProviderMeta> = {
     name: 'Anthropic Claude',
     badge: 'Highest Human Nuance',
     icon: '🧠',
+    recommended: true,
     description: 'Claude 3.5 Sonnet is recognized worldwide as the most articulate, human-sounding LLM.',
     storageKey: 'resumeai_anthropic_api_key',
     defaultModel: 'claude-3-5-sonnet-20241022',
@@ -76,6 +78,7 @@ export const AI_PROVIDERS: Record<AIProvider, AIProviderMeta> = {
     name: 'OpenAI (GPT-4o)',
     badge: 'Industry Benchmark',
     icon: '🟢',
+    recommended: true,
     description: 'GPT-4o delivers crisp logic, complex formatting, and executive ATS restructuring.',
     storageKey: 'resumeai_openai_api_key',
     defaultModel: 'gpt-4o',
@@ -91,15 +94,16 @@ export const AI_PROVIDERS: Record<AIProvider, AIProviderMeta> = {
     name: 'OpenRouter (Universal)',
     badge: '100+ Models',
     icon: '🌐',
-    description: 'Single API key connecting DeepSeek V3, Claude 3.5, Mistral Large, and Llama 3.3.',
+    description: 'Single API key connecting DeepSeek V3/R1, Claude 3.5, Mistral Large, and Llama 3.3.',
     storageKey: 'resumeai_openrouter_api_key',
-    defaultModel: 'anthropic/claude-3.5-sonnet',
+    defaultModel: 'deepseek/deepseek-chat',
     placeholder: 'sk-or-...',
     keyUrl: 'https://openrouter.ai/keys',
     models: [
-      { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet (OpenRouter)', desc: 'Supreme human nuance via OpenRouter' },
-      { id: 'meta-llama/llama-3.3-70b-instruct', name: 'Llama 3.3 70B (OpenRouter)', desc: 'High-burstiness open weights model' },
       { id: 'deepseek/deepseek-chat', name: 'DeepSeek V3', desc: 'State-of-the-art cost/performance model' },
+      { id: 'deepseek/deepseek-r1', name: 'DeepSeek R1', desc: 'Breakthrough reasoning and de-AI synthesis' },
+      { id: 'meta-llama/llama-3.3-70b-instruct', name: 'Llama 3.3 70B (OpenRouter)', desc: 'High-burstiness open weights model' },
+      { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet (OpenRouter)', desc: 'Supreme human nuance via OpenRouter' },
       { id: 'mistralai/mistral-large-2407', name: 'Mistral Large 2', desc: 'European multilingual powerhouse' },
     ],
   },

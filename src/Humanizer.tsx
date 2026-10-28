@@ -1,11 +1,18 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Wand2, Copy, RotateCcw, ArrowRight, ShieldCheck, Sparkles,
-  Sliders, Gauge, Send, AlertCircle, Upload, X, CheckCircle2, ScanSearch, Cpu
+  Sliders, Gauge, Send, AlertCircle, Upload, X, CheckCircle2, ScanSearch, Cpu, ChevronDown
 } from 'lucide-react';
 import { humanizeText } from './gemini';
 import { extractTextFromFile, type ExtractedFileContent } from './fileParser';
-import { AI_PROVIDERS, type AIProvider, getActiveProvider, setActiveProvider } from './aiEngine';
+import {
+  AI_PROVIDERS,
+  type AIProvider,
+  getActiveProvider,
+  setActiveProvider,
+  getActiveModel,
+  setActiveModel
+} from './aiEngine';
 import toast from 'react-hot-toast';
 import styles from './Humanizer.module.css';
 
@@ -14,6 +21,8 @@ interface Props {
   initialText?: string;
   onSendToDetector?: (text: string) => void;
   onRequireAuth?: (proceedCallback: () => void, actionName?: string) => boolean;
+  onOpenAiConfig?: () => void;
+  onProviderChange?: (provider: AIProvider) => void;
 }
 
 const TONES = [
@@ -32,14 +41,58 @@ const BANNED_TROPES = [
   'foster', 'harness', 'leverage', 'thereby ensuring', 'underscores', 'paramount', 'seamless'
 ];
 
-export default function Humanizer({ apiKey, initialText = '', onSendToDetector, onRequireAuth }: Props) {
+export default function Humanizer({
+  apiKey,
+  initialText = '',
+  onSendToDetector,
+  onRequireAuth,
+  onOpenAiConfig,
+  onProviderChange
+}: Props) {
   const [input, setInput] = useState(initialText);
   const [output, setOutput] = useState('');
   const [selectedTone, setSelectedTone] = useState(TONES[0].id);
   const [intensity, setIntensity] = useState<'light' | 'balanced' | 'deep'>('balanced');
   const [provider, setProvider] = useState<AIProvider>(() => getActiveProvider());
+  const [othersOpen, setOthersOpen] = useState(false);
+  const othersRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
   const outputRef = useRef<HTMLDivElement>(null);
+
+  // Close "Others" dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (othersRef.current && !othersRef.current.contains(e.target as Node)) {
+        setOthersOpen(false);
+      }
+    };
+    if (othersOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [othersOpen]);
+
+  const handleSelectProvider = (p: AIProvider, modelId?: string) => {
+    setProvider(p);
+    setActiveProvider(p);
+    if (modelId) {
+      setActiveModel(p, modelId);
+    }
+    if (onProviderChange) onProviderChange(p);
+    const meta = AI_PROVIDERS[p];
+    if (p === 'anthropic') {
+      toast.success('Switched to Anthropic Claude (⭐ Recommended for authentic human tone)');
+    } else if (p === 'openai') {
+      toast.success('Switched to OpenAI GPT-4o (⭐ Recommended for sharp human cadence)');
+    } else {
+      toast.success(`Switched AI Engine to ${meta.name}`);
+    }
+  };
+
+  const isOtherActive = provider !== 'anthropic' && provider !== 'openai';
+  const activeOtherMeta = AI_PROVIDERS[provider];
 
   // File Upload state
   const [uploadedFile, setUploadedFile] = useState<ExtractedFileContent | null>(null);
@@ -157,23 +210,140 @@ export default function Humanizer({ apiKey, initialText = '', onSendToDetector, 
         <div className={styles.engineGroup}>
           <label><Cpu size={14} /> AI Engine:</label>
           <div className={styles.enginePills}>
-            {(['gemini', 'groq', 'anthropic', 'openai'] as AIProvider[]).map(p => {
-              const meta = AI_PROVIDERS[p];
-              return (
-                <button
-                  key={p}
-                  className={`${styles.engineBtn} ${provider === p ? styles.activeEngine : ''}`}
-                  onClick={() => {
-                    setProvider(p);
-                    setActiveProvider(p);
-                    toast.success(`Switched AI Engine to ${meta.name}`);
-                  }}
-                  title={meta.description}
-                >
-                  <span>{meta.icon}</span> {meta.name}
-                </button>
-              );
-            })}
+            {/* 1. Anthropic Claude (Recommended) */}
+            <button
+              type="button"
+              className={`${styles.engineBtn} ${styles.recommendedBtn} ${provider === 'anthropic' ? styles.activeEngine : ''}`}
+              onClick={() => handleSelectProvider('anthropic')}
+              title="Anthropic Claude 3.5 Sonnet — Gold standard for authentic, human-level writing and natural tone"
+            >
+              <span>🧠 Anthropic Claude</span>
+              <span className={styles.recBadge}>⭐ Recommended</span>
+            </button>
+
+            {/* 2. OpenAI GPT-4o (Recommended) */}
+            <button
+              type="button"
+              className={`${styles.engineBtn} ${styles.recommendedBtn} ${provider === 'openai' ? styles.activeEngine : ''}`}
+              onClick={() => handleSelectProvider('openai')}
+              title="OpenAI GPT-4o — Industry benchmark for executive restructuring and crisp human cadence"
+            >
+              <span>🟢 OpenAI (GPT-4o)</span>
+              <span className={styles.recBadge}>⭐ Recommended</span>
+            </button>
+
+            {/* 3. Others Dropdown (Groq, Gemini, OpenRouter, and more models) */}
+            <div className={styles.othersWrapper} ref={othersRef}>
+              <button
+                type="button"
+                className={`${styles.engineBtn} ${styles.othersBtn} ${isOtherActive ? styles.activeEngine : ''}`}
+                onClick={() => setOthersOpen(prev => !prev)}
+                title="Select other models: Groq (Llama 3.3), Google Gemini, OpenRouter, DeepSeek, and more"
+              >
+                <span>
+                  {isOtherActive ? `${activeOtherMeta?.icon} Others: ${activeOtherMeta?.name}` : '🌐 Others / More Models'}
+                </span>
+                <ChevronDown
+                  size={12}
+                  className={`${styles.chevron} ${othersOpen ? styles.chevronOpen : ''}`}
+                />
+              </button>
+
+              {othersOpen && (
+                <div className={styles.othersDropdown}>
+                  <div className={styles.dropdownHeader}>
+                    <div className={styles.dropdownTitleRow}>
+                      <Cpu size={14} />
+                      <span>Other AI Engines & Models</span>
+                    </div>
+                    <span className={styles.dropdownSubtitle}>
+                      Groq Llama 3.3, Google Gemini, OpenRouter, and custom models
+                    </span>
+                  </div>
+
+                  <div className={styles.othersList}>
+                    {(['groq', 'gemini', 'openrouter'] as AIProvider[]).map(p => {
+                      const meta = AI_PROVIDERS[p];
+                      const isSelected = provider === p;
+                      const activeModelId = getActiveModel(p);
+
+                      return (
+                        <div
+                          key={p}
+                          className={`${styles.otherCard} ${isSelected ? styles.otherCardActive : ''}`}
+                        >
+                          <div
+                            className={styles.otherCardHeader}
+                            onClick={() => {
+                              handleSelectProvider(p);
+                              setOthersOpen(false);
+                            }}
+                          >
+                            <div className={styles.otherInfo}>
+                              <span className={styles.otherIcon}>{meta.icon}</span>
+                              <div>
+                                <div className={styles.otherNameRow}>
+                                  <span className={styles.otherName}>{meta.name}</span>
+                                  <span className={styles.otherBadge}>{meta.badge}</span>
+                                </div>
+                                <p className={styles.otherDesc}>{meta.description}</p>
+                              </div>
+                            </div>
+                            <div className={styles.otherRadio}>
+                              {isSelected ? (
+                                <CheckCircle2 size={16} className={styles.activeCheck} />
+                              ) : (
+                                <span className={styles.radioCircle} />
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Model Chips */}
+                          <div className={styles.otherModelsRow}>
+                            {meta.models.map(m => (
+                              <button
+                                key={m.id}
+                                type="button"
+                                className={`${styles.otherModelChip} ${
+                                  isSelected && activeModelId === m.id
+                                    ? styles.otherModelChipActive
+                                    : ''
+                                }`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleSelectProvider(p, m.id);
+                                  setOthersOpen(false);
+                                }}
+                                title={m.desc}
+                              >
+                                {m.name}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {onOpenAiConfig && (
+                    <div className={styles.dropdownFooter}>
+                      <button
+                        type="button"
+                        className={styles.openConfigBtn}
+                        onClick={() => {
+                          setOthersOpen(false);
+                          onOpenAiConfig();
+                        }}
+                      >
+                        <Sliders size={13} />
+                        <span>Configure API Keys & Custom Models</span>
+                        <ArrowRight size={13} style={{ marginLeft: 'auto' }} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

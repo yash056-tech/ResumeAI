@@ -38,7 +38,7 @@
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .title {
-  font-size: 1.25rem; font-weight: 800; color: #fff; margin: 0 0 0.25rem;
+  font-size: 1.25rem; font-weight: 800; color: var(--text-heading); margin: 0 0 0.25rem;
 }
 .subtitle {
   font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; margin: 0; max-width: 640px;
@@ -49,7 +49,7 @@
   color: var(--text-muted); cursor: pointer; transition: all 0.2s; flex-shrink: 0;
 }
 .closeBtn:hover {
-  color: #fff; border-color: var(--border-hover); background: var(--bg);
+  color: var(--text-heading); border-color: var(--border-hover); background: var(--bg);
 }
 
 .bodyGrid {
@@ -84,7 +84,7 @@
 .provIcon { font-size: 1.2rem; }
 .provText { display: flex; flex-direction: column; gap: 0.15rem; flex: 1; }
 .provNameRow { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
-.provName { font-size: 0.82rem; font-weight: 700; color: #fff; }
+.provName { font-size: 0.82rem; font-weight: 700; color: var(--text-heading); }
 .recBadgePill {
   font-size: 0.58rem; font-weight: 800; color: #fbbf24;
   background: rgba(251, 191, 36, 0.16); border: 1px solid rgba(251, 191, 36, 0.4);
@@ -121,7 +121,7 @@
   padding-bottom: 0.9rem; border-bottom: 1px solid var(--border);
 }
 .largeIcon { font-size: 2rem; }
-.paneTitle { font-size: 1.15rem; font-weight: 800; color: #fff; margin: 0 0 0.2rem; }
+.paneTitle { font-size: 1.15rem; font-weight: 800; color: var(--text-heading); margin: 0 0 0.2rem; }
 .paneDesc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; margin: 0; }
 
 .fieldGroup {
@@ -147,7 +147,7 @@
 .modelNameRow {
   display: flex; justify-content: space-between; align-items: center;
 }
-.modelName { font-size: 0.82rem; font-weight: 700; color: #fff; }
+.modelName { font-size: 0.82rem; font-weight: 700; color: var(--text-heading); }
 .modelDesc { font-size: 0.72rem; color: var(--text-faint); }
 
 .keyLabelRow {
@@ -157,7 +157,7 @@
   display: flex; align-items: center; gap: 0.25rem; font-size: 0.72rem;
   color: var(--accent2); text-decoration: none;
 }
-.keyLink:hover { text-decoration: underline; color: #fff; }
+.keyLink:hover { text-decoration: underline; color: var(--text-heading); }
 
 .inputWrapper {
   position: relative; display: flex; align-items: center;
@@ -173,7 +173,7 @@
   position: absolute; right: 0.7rem; background: none; border: none;
   color: var(--text-muted); cursor: pointer; display: flex; align-items: center;
 }
-.eyeBtn:hover { color: #fff; }
+.eyeBtn:hover { color: var(--text-heading); }
 
 .helperText {
   font-size: 0.74rem; color: var(--text-faint); line-height: 1.45; margin: 0;

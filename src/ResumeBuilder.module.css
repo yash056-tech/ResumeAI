@@ -27,12 +27,13 @@
   font-size: 0.76rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
 }
 .pillBtn:hover {
-  color: #fff; border-color: var(--accent);
+  color: var(--text-heading); border-color: var(--accent);
 }
 .pillActive {
   background: rgba(99, 120, 255, 0.18);
   border-color: var(--accent);
-  color: #fff; box-shadow: 0 0 12px rgba(99, 120, 255, 0.25);
+  color: var(--accent); box-shadow: 0 0 12px rgba(99, 120, 255, 0.25);
+  font-weight: 700;
 }
 
 /* Main Grid */
@@ -165,7 +166,7 @@
   display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.6rem;
 }
 .previewTitle {
-  font-size: 1rem; font-weight: 700; color: #fff;
+  font-size: 1rem; font-weight: 700; color: var(--text-heading);
 }
 .outputActions {
   display: flex; gap: 0.35rem; flex-wrap: wrap;
@@ -177,7 +178,7 @@
   transition: all 0.2s;
 }
 .outputActions button:hover {
-  border-color: var(--accent); color: #fff;
+  border-color: var(--accent); color: var(--text-heading);
 }
 
 /* Resume Paper */
@@ -185,7 +186,7 @@
   background: var(--bg2); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 2rem 2.2rem;
   min-height: 480px; max-height: 640px; overflow-y: auto;
-  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-sm);
 }
 
 .emptyPrompt {
@@ -193,7 +194,7 @@
   padding: 4.5rem 1.5rem; text-align: center; gap: 0.6rem;
 }
 .emptyIcon { color: var(--text-faint); margin-bottom: 0.5rem; }
-.emptyPrompt h4 { font-size: 1.1rem; color: #fff; font-weight: 700; }
+.emptyPrompt h4 { font-size: 1.1rem; color: var(--text-heading); font-weight: 700; }
 .emptyPrompt p { font-size: 0.85rem; color: var(--text-muted); max-width: 420px; line-height: 1.5; }
 
 /* Templates */
@@ -204,14 +205,14 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #fff;
+  color: var(--text-heading);
   margin-bottom: 0.3rem;
 }
 .tpl-harvard .styledDoc p:first-of-type {
   text-align: center;
   font-size: 0.85rem;
   color: var(--text-muted);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid var(--border);
   padding-bottom: 0.6rem;
   margin-bottom: 1rem;
 }
@@ -221,8 +222,8 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #fff;
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.3);
+  color: var(--text-heading);
+  border-bottom: 1.5px solid var(--border-hover);
   padding-bottom: 0.25rem;
   margin-top: 1.2rem;
   margin-bottom: 0.5rem;
@@ -258,7 +259,7 @@
 }
 .tpl-minimal .styledDoc h1,
 .tpl-minimal .styledDoc h2 {
-  color: #fff;
+  color: var(--text-heading);
   border-bottom: 1px solid var(--border);
   font-size: 0.92rem;
   text-transform: uppercase;
@@ -330,7 +331,7 @@
 /* ── Sample Resume Templates Modal ── */
 .modalOverlay {
   position: fixed; inset: 0; z-index: 999;
-  background: rgba(7, 10, 19, 0.82);
+  background: var(--modal-overlay);
   backdrop-filter: blur(8px);
   display: flex; align-items: center; justify-content: center;
   padding: 1.5rem;
@@ -345,7 +346,7 @@
   background: var(--bg2); border: 1px solid var(--border-hover);
   border-radius: var(--radius-lg); width: 100%; max-width: 980px; max-height: 88vh;
   display: flex; flex-direction: column; overflow: hidden;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(99, 120, 255, 0.15);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3), 0 0 30px rgba(99, 120, 255, 0.15);
   animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 @keyframes slideUp {
@@ -366,7 +367,7 @@
   padding: 0.2rem 0.65rem; margin-bottom: 0.5rem;
 }
 .modalTitle {
-  font-size: 1.35rem; font-weight: 800; color: #fff; margin: 0 0 0.35rem;
+  font-size: 1.35rem; font-weight: 800; color: var(--text-heading); margin: 0 0 0.35rem;
 }
 .modalSubtitle {
   font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin: 0; max-width: 780px;
@@ -377,7 +378,7 @@
   color: var(--text-muted); cursor: pointer; transition: all 0.2s; flex-shrink: 0;
 }
 .modalCloseBtn:hover {
-  color: #fff; border-color: var(--border-hover); background: var(--bg);
+  color: var(--text-heading); border-color: var(--border-hover); background: var(--bg);
 }
 
 .categoryTabs {
@@ -390,9 +391,10 @@
   font-size: 0.78rem; font-weight: 600; padding: 0.35rem 0.85rem; border-radius: 99px;
   cursor: pointer; white-space: nowrap; transition: all 0.2s;
 }
-.categoryTab:hover { color: #fff; border-color: var(--border); }
+.categoryTab:hover { color: var(--text-heading); border-color: var(--border); }
 .categoryActive {
-  background: rgba(99, 120, 255, 0.2); border-color: var(--accent); color: #fff;
+  background: rgba(99, 120, 255, 0.18); border-color: var(--accent); color: var(--accent);
+  font-weight: 700;
 }
 
 .templatesGrid {
@@ -442,7 +444,7 @@
 }
 
 .tplTitle {
-  font-size: 0.96rem; font-weight: 700; color: #fff; margin: 0; line-height: 1.35;
+  font-size: 0.96rem; font-weight: 700; color: var(--text-heading); margin: 0; line-height: 1.35;
 }
 .tplSeniority {
   font-size: 0.75rem; color: var(--text-faint);
@@ -485,7 +487,7 @@
   padding: 0.4rem 1.1rem; border-radius: var(--radius-sm); font-size: 0.78rem;
   font-weight: 600; cursor: pointer; transition: all 0.2s;
 }
-.modalDismissBtn:hover { border-color: var(--border-hover); color: #fff; }
+.modalDismissBtn:hover { border-color: var(--border-hover); color: var(--text-heading); }
 
 /* ── Print Styles for Clean ATS PDF ── */
 @media print {

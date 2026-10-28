@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import {
   FileText, Key, Zap, CheckCircle2,
   Sparkles, LogOut, ChevronDown, Shield,
-  Globe, ArrowRight, Cpu, BookOpen
+  Globe, ArrowRight, Cpu, BookOpen, Sun, Moon
 } from 'lucide-react';
 import { useApiKey } from './useApiKey';
 import { useAuth } from './useAuth';
@@ -25,6 +25,21 @@ export default function App() {
     logout,
     addSavedResume,
   } = useAuth();
+
+  // Theme state: default to 'light' as requested ("make the theme light like text in dark and background as light but provide mode for light and dark mode")
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('resumeai_theme');
+    return (saved === 'dark' || saved === 'light') ? saved : 'light';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('resumeai_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(t => (t === 'light' ? 'dark' : 'light'));
+  };
 
   const [showKeyModal, setShowKeyModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -141,6 +156,26 @@ export default function App() {
 
           {/* Quick Header Navigation for Templates & Engine */}
           <div className={styles.headerActions}>
+            {/* Theme Toggle: Light Mode & Dark Mode */}
+            <button
+              className={styles.themeToggleBtn}
+              onClick={toggleTheme}
+              title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+              aria-label="Toggle theme"
+            >
+              {theme === 'light' ? (
+                <>
+                  <Moon size={14} className={styles.themeIconMoon} />
+                  <span>Dark Mode</span>
+                </>
+              ) : (
+                <>
+                  <Sun size={14} className={styles.themeIconSun} />
+                  <span>Light Mode</span>
+                </>
+              )}
+            </button>
+
             {/* Direct Templates Gallery Trigger */}
             <button
               className={styles.templateHeaderBtn}

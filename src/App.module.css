@@ -6,7 +6,7 @@
 /* ── Header ── */
 .header {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(7, 9, 14, 0.94);
+  background: var(--header-bg);
   backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--border);
 }
@@ -29,7 +29,7 @@
   display: flex; align-items: center; gap: 0.45rem;
 }
 .logoName {
-  font-size: 1.15rem; font-weight: 800; color: #fff; letter-spacing: -0.03em;
+  font-size: 1.15rem; font-weight: 800; color: var(--text-heading); letter-spacing: -0.03em;
 }
 .proTag {
   background: linear-gradient(135deg, #f59e0b, #ef4444);
@@ -70,6 +70,19 @@
 .headerActions {
   display: flex; align-items: center; gap: 0.65rem; margin-left: auto; flex-shrink: 0;
 }
+
+.themeToggleBtn {
+  display: flex; align-items: center; gap: 0.4rem;
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 99px;
+  color: var(--text); padding: 0.38rem 0.8rem; font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.themeToggleBtn:hover {
+  border-color: var(--accent); background: var(--bg2);
+  box-shadow: 0 0 12px rgba(99, 120, 255, 0.2);
+}
+.themeIconMoon { color: #6378ff; }
+.themeIconSun { color: #f59e0b; }
 
 .countryPill {
   display: flex; align-items: center; gap: 0.3rem;
@@ -185,7 +198,7 @@
   display: flex; flex-direction: column; gap: 0.2rem;
   border-bottom: 1px solid var(--border); padding-bottom: 0.6rem;
 }
-.userDropdownHeader strong { font-size: 0.88rem; color: #fff; }
+.userDropdownHeader strong { font-size: 0.88rem; color: var(--text-heading); }
 .userDropdownHeader span { font-size: 0.74rem; color: var(--text-faint); }
 .userMetaBadges {
   display: flex; gap: 0.35rem; margin-top: 0.25rem; flex-wrap: wrap;
@@ -214,7 +227,7 @@
   cursor: pointer; transition: all 0.2s; width: 100%; text-align: left;
 }
 .userDropdownLinks button:hover {
-  background: var(--bg2); color: #fff;
+  background: var(--bg2); color: var(--text-heading);
 }
 .logoutBtn {
   color: var(--accent-red) !important;
@@ -227,7 +240,7 @@
   font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
 }
 .viewPlansBtn:hover {
-  background: var(--bg2); color: #fff; border-color: var(--border-hover);
+  background: var(--bg2); color: var(--text-heading); border-color: var(--border-hover);
 }
 
 .signInBtn {
@@ -264,7 +277,7 @@
   width: fit-content; letter-spacing: 0.04em; text-transform: uppercase;
 }
 .heroTitle {
-  font-size: 1.85rem; font-weight: 800; color: #fff; letter-spacing: -0.03em;
+  font-size: 1.85rem; font-weight: 800; color: var(--text-heading); letter-spacing: -0.03em;
 }
 .heroDesc {
   font-size: 0.92rem; color: var(--text-muted); max-width: 620px; line-height: 1.6;
@@ -276,11 +289,11 @@
 }
 .heroPillItem {
   display: flex; align-items: center; gap: 0.35rem;
-  background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg3); border: 1px solid var(--border);
   padding: 0.22rem 0.7rem; border-radius: 99px;
   font-size: 0.74rem; color: var(--text-muted);
 }
-.heroPillItem strong { color: #fff; }
+.heroPillItem strong { color: var(--text-heading); }
 .heroPillDot {
   width: 6px; height: 6px; border-radius: 50%;
   background: var(--accent3); box-shadow: 0 0 6px var(--accent3);
@@ -335,12 +348,12 @@
 
 .guestBanner {
   display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem;
-  background: linear-gradient(90deg, rgba(99, 120, 255, 0.1) 0%, rgba(167, 139, 250, 0.08) 100%);
-  border: 1px solid rgba(99, 120, 255, 0.3);
+  background: linear-gradient(90deg, rgba(99, 120, 255, 0.08) 0%, rgba(167, 139, 250, 0.06) 100%);
+  border: 1px solid var(--border-hover);
   border-radius: var(--radius-sm); padding: 0.8rem 1.2rem; margin-bottom: 1.4rem;
-  font-size: 0.84rem; color: #c7d2fe;
+  font-size: 0.84rem; color: var(--text);
 }
-.guestBanner strong { color: #fff; }
+.guestBanner strong { color: var(--text-heading); }
 .guestBannerBtn {
   display: inline-flex; align-items: center; gap: 0.35rem;
   background: rgba(99, 120, 255, 0.2); border: 1px solid rgba(99, 120, 255, 0.4);
@@ -385,4 +398,4 @@
   background: none; border: none; color: var(--text-muted); font-size: 0.78rem;
   cursor: pointer; transition: color 0.2s;
 }
-.footerLinks button:hover { color: #fff; }
+.footerLinks button:hover { color: var(--text-heading); }

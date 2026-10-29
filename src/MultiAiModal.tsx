@@ -105,7 +105,7 @@ export default function MultiAiModal({ isOpen, onClose, onProviderChanged }: Pro
             <div>
               <h2 className={styles.title}>Multi-AI Engine Architecture</h2>
               <p className={styles.subtitle}>
-                Connect other world-class AI models (Claude 3.5, Llama 3.3 via Groq, GPT-4o, or OpenRouter) for maximum human nuance and speed.
+                Anthropic Claude is configured as your default AI engine for industry-leading human nuance and ATS performance.
               </p>
             </div>
           </div>
@@ -238,7 +238,7 @@ export default function MultiAiModal({ isOpen, onClose, onProviderChanged }: Pro
                 )}
                 {selectedProvider === 'anthropic' && (
                   <p className={styles.helperText}>
-                    🧠 Claude 3.5 Sonnet requires an Anthropic API key with browser CORS access allowed.
+                    🧠 <strong>Anthropic Claude 3.5 Sonnet</strong> is your <strong>Default Engine</strong> on ResumeAI. Add your Anthropic API key here or via <code>VITE_ANTHROPIC_API_KEY</code>. If a key is not entered, generation uses the built-in backup engine automatically.
                   </p>
                 )}
               </div>

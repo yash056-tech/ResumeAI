@@ -194,7 +194,7 @@ export default function App() {
             >
               <Cpu size={14} className={styles.engineIcon} />
               <span className={styles.engineLabel}>
-                {AI_PROVIDERS[activeProvider]?.icon || '🔮'} {AI_PROVIDERS[activeProvider]?.name || 'Gemini'}
+                {AI_PROVIDERS[activeProvider]?.icon || '🧠'} {AI_PROVIDERS[activeProvider]?.name || 'Anthropic Claude'}
               </span>
               <ChevronDown size={12} className={styles.engineChevron} />
             </button>

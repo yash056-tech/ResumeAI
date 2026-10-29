@@ -25,6 +25,38 @@ export interface AIProviderMeta {
 }
 
 export const AI_PROVIDERS: Record<AIProvider, AIProviderMeta> = {
+  anthropic: {
+    id: 'anthropic',
+    name: 'Anthropic Claude',
+    badge: 'Default · Highest Human Nuance',
+    icon: '🧠',
+    recommended: true,
+    description: 'Claude 3.5 Sonnet is recognized worldwide as the most articulate, human-sounding LLM. Default engine on ResumeAI.',
+    storageKey: 'resumeai_anthropic_api_key',
+    defaultModel: 'claude-3-5-sonnet-20241022',
+    placeholder: 'sk-ant-...',
+    keyUrl: 'https://console.anthropic.com/settings/keys',
+    models: [
+      { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet', desc: 'Gold standard for authentic, human-level writing (Default)' },
+      { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku', desc: 'Fast, responsive, high-intelligence editor' },
+    ],
+  },
+  openai: {
+    id: 'openai',
+    name: 'OpenAI (GPT-4o)',
+    badge: 'Industry Benchmark',
+    icon: '🟢',
+    recommended: true,
+    description: 'GPT-4o delivers crisp logic, complex formatting, and executive ATS restructuring.',
+    storageKey: 'resumeai_openai_api_key',
+    defaultModel: 'gpt-4o',
+    placeholder: 'sk-...',
+    keyUrl: 'https://platform.openai.com/api-keys',
+    models: [
+      { id: 'gpt-4o', name: 'GPT-4o', desc: 'Flagship multimodal intelligence' },
+      { id: 'gpt-4o-mini', name: 'GPT-4o Mini', desc: 'Fast, cost-efficient, sharp editing' },
+    ],
+  },
   gemini: {
     id: 'gemini',
     name: 'Google Gemini',
@@ -36,7 +68,7 @@ export const AI_PROVIDERS: Record<AIProvider, AIProviderMeta> = {
     placeholder: 'AIzaSy...',
     keyUrl: 'https://aistudio.google.com/app/apikey',
     models: [
-      { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash Lite', desc: 'Blazing fast, balanced reasoning (Default)' },
+      { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash Lite', desc: 'Blazing fast, balanced reasoning' },
       { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash', desc: 'Next-gen flagship high-speed model' },
       { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', desc: 'Enterprise calibrated stable model' },
     ],
@@ -55,38 +87,6 @@ export const AI_PROVIDERS: Record<AIProvider, AIProviderMeta> = {
       { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B Versatile', desc: 'Top-tier open intelligence, organic phrasing' },
       { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B Instant', desc: 'Sub-second latency, lightweight' },
       { id: 'mixtral-8x7b-32768', name: 'Mixtral 8x7B', desc: 'High-context sparse MoE architecture' },
-    ],
-  },
-  anthropic: {
-    id: 'anthropic',
-    name: 'Anthropic Claude',
-    badge: 'Highest Human Nuance',
-    icon: '🧠',
-    recommended: true,
-    description: 'Claude 3.5 Sonnet is recognized worldwide as the most articulate, human-sounding LLM.',
-    storageKey: 'resumeai_anthropic_api_key',
-    defaultModel: 'claude-3-5-sonnet-20241022',
-    placeholder: 'sk-ant-...',
-    keyUrl: 'https://console.anthropic.com/settings/keys',
-    models: [
-      { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet', desc: 'Gold standard for authentic, human-level writing' },
-      { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku', desc: 'Fast, responsive, high-intelligence editor' },
-    ],
-  },
-  openai: {
-    id: 'openai',
-    name: 'OpenAI (GPT-4o)',
-    badge: 'Industry Benchmark',
-    icon: '🟢',
-    recommended: true,
-    description: 'GPT-4o delivers crisp logic, complex formatting, and executive ATS restructuring.',
-    storageKey: 'resumeai_openai_api_key',
-    defaultModel: 'gpt-4o',
-    placeholder: 'sk-...',
-    keyUrl: 'https://platform.openai.com/api-keys',
-    models: [
-      { id: 'gpt-4o', name: 'GPT-4o', desc: 'Flagship multimodal intelligence' },
-      { id: 'gpt-4o-mini', name: 'GPT-4o Mini', desc: 'Fast, cost-efficient, sharp editing' },
     ],
   },
   openrouter: {
@@ -119,9 +119,25 @@ export function getProviderApiKey(provider: AIProvider): string {
   const stored = localStorage.getItem(meta.storageKey);
   if (stored && stored.trim()) return stored.trim();
 
-  // If Gemini, fall back to environment variable
+  // Environment variable fallbacks for seamless setup
+  if (provider === 'anthropic') {
+    const envKey = (import.meta.env.VITE_ANTHROPIC_API_KEY as string) || '';
+    if (envKey.trim()) return envKey.trim();
+  }
+  if (provider === 'openai') {
+    const envKey = (import.meta.env.VITE_OPENAI_API_KEY as string) || '';
+    if (envKey.trim()) return envKey.trim();
+  }
   if (provider === 'gemini') {
     const envKey = (import.meta.env.VITE_GEMINI_API_KEY as string) || '';
+    if (envKey.trim()) return envKey.trim();
+  }
+  if (provider === 'groq') {
+    const envKey = (import.meta.env.VITE_GROQ_API_KEY as string) || '';
+    if (envKey.trim()) return envKey.trim();
+  }
+  if (provider === 'openrouter') {
+    const envKey = (import.meta.env.VITE_OPENROUTER_API_KEY as string) || '';
     if (envKey.trim()) return envKey.trim();
   }
 
@@ -143,15 +159,14 @@ export function setProviderApiKey(provider: AIProvider, key: string): void {
 }
 
 /**
- * Get or set currently selected provider
+ * Get or set currently selected provider (Defaults to Anthropic Claude)
  */
 export function getActiveProvider(): AIProvider {
   const saved = localStorage.getItem('resumeai_active_provider') as AIProvider;
   if (saved && AI_PROVIDERS[saved]) {
-    // If provider has a key configured or is gemini, use it
-    if (getProviderApiKey(saved)) return saved;
+    return saved;
   }
-  return 'gemini';
+  return 'anthropic';
 }
 
 export function setActiveProvider(provider: AIProvider): void {
@@ -164,7 +179,7 @@ export function setActiveProvider(provider: AIProvider): void {
 export function getActiveModel(provider: AIProvider): string {
   const saved = localStorage.getItem(`resumeai_model_${provider}`);
   if (saved) return saved;
-  return AI_PROVIDERS[provider]?.defaultModel || 'gemini-3.5-flash-lite';
+  return AI_PROVIDERS[provider]?.defaultModel || 'claude-3-5-sonnet-20241022';
 }
 
 export function setActiveModel(provider: AIProvider, model: string): void {
